@@ -56,12 +56,22 @@ Open `http://localhost:8000` in your browser.
 
 ```
 CRUD_PHP/
-├── config/          # Database configuration (not in git)
-├── controllers/     # Request handling
-├── models/          # Database operations
-├── views/           # HTML templates
-├── sql/             # Database schema
-└── index.php        # Application entry point
+├── .gitignore
+├── README.md
+├── index.php                          # Application entry point
+├── config/
+│   └── database.php                   # Database configuration (not in git)
+├── controllers/
+│   └── ArticleController.php          # Article CRUD operations handler
+├── models/
+│   └── Article.php                    # Article database model
+├── sql/
+│   └── data.sql                       # Database schema and seed data
+└── views/
+    └── article/
+        ├── index.php                  # List all articles
+        ├── create.php                 # Create new article form
+        └── edit.php                   # Edit article form
 ```
 
 ## Security
