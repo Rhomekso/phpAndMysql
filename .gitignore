@@ -1,0 +1,16 @@
+# Ignore all folders except CRUD_PHP/
+
+# Ignore everything by default
+/*
+
+# But don't ignore CRUD_PHP/ folder
+!CRUD_PHP/
+
+# Don't ignore .gitignore itself
+!.gitignore
+
+# Specific folders to ignore (explicit for clarity)
+BMI_project/
+Emotikonijn-app/
+practiceMysql/
+testfiles/
