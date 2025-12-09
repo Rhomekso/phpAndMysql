@@ -1,25 +1,23 @@
 <?php
-// Function to ensure database and table exist
+// Ensure database and table exist
 function ensureDatabaseSetup() {
     $host = "localhost";
-    $username = "root";
-    $password = "";
+    $username = "admin";
+    $password = "admin123";
 
     try {
-        // 1. Connect to MySQL Server (no DB selected yet)
+        // 1. Connect to Server
         $pdo = new PDO("mysql:host=$host", $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // 2. Create Database
         $sql = "CREATE DATABASE IF NOT EXISTS rolapplicatie";
         $pdo->exec($sql);
-        // echo "Database created successfully or already exists.<br>";
 
-        // 3. Connect to the specific database
+        // 3. Select Database
         $pdo->exec("USE rolapplicatie");
 
         // 4. Create Table
-        // Added 'description' as TEXT to satisfy SQL data type requirement
         $sql = "CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(50) NOT NULL UNIQUE,
@@ -28,20 +26,29 @@ function ensureDatabaseSetup() {
             description TEXT
         )";
         $pdo->exec($sql);
-        // echo "Table 'users' created successfully or already exists.<br>";
 
-        // 5. Helper function to check and insert user
+        // 4b. Add description column if missing
+        try {
+            $checkCol = $pdo->query("SHOW COLUMNS FROM users LIKE 'description'");
+            if ($checkCol->rowCount() == 0) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN description TEXT");
+            }
+        } catch (PDOException $e) {
+            // Ignore check failure
+        }
+
+        // 5. Helper to create user
         function createDefaultUser($pdo, $user, $pass, $role, $desc = '') {
-            // Prepare statement to check existence
+            // Check if user exists
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE username = :username");
             $stmt->bindParam(':username', $user);
             $stmt->execute();
             
             if ($stmt->fetchColumn() == 0) {
-                // Hash the password!
+                // Hash password
                 $hashed_password = password_hash($pass, PASSWORD_DEFAULT);
                 
-                // Insert
+                // Insert user
                 $insert = $pdo->prepare("INSERT INTO users (username, password, role, description) VALUES (:username, :password, :role, :description)");
                 $insert->bindParam(':username', $user);
                 $insert->bindParam(':password', $hashed_password);
@@ -53,12 +60,12 @@ function ensureDatabaseSetup() {
             }
         }
 
-        // 6. Insert default users
+        // 6. Create default users
         createDefaultUser($pdo, 'admin', 'admin123', 'admin', 'Administrator account');
         createDefaultUser($pdo, 'gebruiker', 'gebruiker123', 'user', 'Standaard gebruiker');
 
     } catch(PDOException $e) {
-        // Log error instead of echoing
+        // Log error
         error_log("Setup Error: " . $e->getMessage());
     }
     

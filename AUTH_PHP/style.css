@@ -1,0 +1,264 @@
+:root {
+    /* Color Palette */
+    --primary-color: #4f46e5;       /* Main action color (Indigo) */
+    --primary-hover: #4338ca;       /* Darker shade for hover states */
+    --bg-color: #f3f4f6;            /* Global background color */
+    --card-bg: #ffffff;             /* Card/Container background color */
+    --text-color: #1f2937;          /* Primary text color */
+    --text-muted: #6b7280;          /* Secondary/Placeholder text color */
+    --border-color: #e5e7eb;        /* Border color for inputs/tables */
+    --error-color: #dc2626;         /* Error message/button color */
+    --success-color: #16a34a;       /* Success message color */
+    
+    /* Typography */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* =========================================
+   Global Reset & Body Styles
+   ========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+/* =========================================
+   Typography
+   ========================================= */
+h1, h2, h3 {
+    color: #111827;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* Container for page content */
+body > * {
+    max-width: 800px;
+    width: 100%;
+}
+
+/* =========================================
+   Forms & Inputs
+   ========================================= */
+form {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+input[type="text"],
+input[type="password"],
+textarea,
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    transition: border-color 0.15s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+input[type="submit"], button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.15s;
+    display: inline-block;
+}
+
+input[type="submit"]:hover, button:hover {
+    background-color: var(--primary-hover);
+}
+
+/* =========================================
+   Tables
+   ========================================= */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+    background: var(--card-bg);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background-color: #f9fafb;
+}
+
+/* =========================================
+   Buttons & Actions
+   ========================================= */
+/* Action Buttons in Table */
+.btn-edit, .btn-delete {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    color: white;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: background-color 0.15s;
+    margin-right: 0.25rem;
+}
+
+.btn-edit {
+    background-color: var(--primary-color);
+}
+.btn-edit:hover {
+    background-color: var(--primary-hover);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-delete {
+    background-color: var(--error-color);
+}
+.btn-delete:hover {
+    background-color: #b91c1c; /* darker red */
+    color: white;
+    text-decoration: none;
+}
+
+.btn-logout {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    background-color: #6b7280; /* Gray-500 */
+    color: white;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.15s;
+}
+
+.btn-logout:hover {
+    background-color: #4b5563; /* Gray-600 */
+    color: white;
+    text-decoration: none;
+}
+
+/* Messages */
+p[style*="color:red"], p.error {
+    color: var(--error-color) !important;
+    background-color: #fef2f2;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+}
+
+p[style*="color:blue"], p.success {
+    color: var(--success-color) !important;
+    background-color: #f0fdf4;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+}
+
+/* Navigation & Layout Helpers */
+.admin-controls, .user-list {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+}
+
+.admin-controls button {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Utilities */
+.text-center { text-align: center; }
+.mt-4 { margin-top: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+
+/* Responsive */
+@media (max-width: 600px) {
+    body {
+        padding: 1rem;
+    }
+    
+    th, td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+    }
+}

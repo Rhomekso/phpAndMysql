@@ -4,28 +4,29 @@ session_start();
 // Handle logout
 if (isset($_GET['logout'])) {
     session_destroy();
-    header("Location: login.php");
+    header("Location: index.php");
     exit();
 }
 
 // Check if user is logged in
 if (!isset($_SESSION['username'])) {
-    // Req 5: Without logging in, only the registration button is displayed.
-    // (We also provide a login link for usability)
+    // Display registration button only when not logged in
     ?>
     <!DOCTYPE html>
     <html lang="nl">
     <head>
         <meta charset="UTF-8">
         <title>Start</title>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <h1>Welkom bij de Rolapplicatie</h1>
         <p>U bent niet ingelogd.</p>
         
-        <button onclick="window.location.href='register.php'">Registreren</button>
-        <br><br>
-        <a href="login.php">Inloggen</a>
+        <div style="display: flex; gap: 10px; margin-top: 1rem;">
+            <button onclick="window.location.href='register.php'">Registreren</button>
+            <button onclick="window.location.href='login.php'" style="background-color: #10b981; color: white;">Inloggen</button>
+        </div>
     </body>
     </html>
     <?php
@@ -36,7 +37,7 @@ require 'db.php';
 $username = $_SESSION['username'];
 $role = $_SESSION['role'];
 
-// Get current user ID for self-editing
+// Get current user ID
 $stmt = $conn->prepare("SELECT id FROM users WHERE username = :username");
 $stmt->bindParam(':username', $username);
 $stmt->execute();
@@ -49,12 +50,13 @@ $current_user_id = $stmt->fetchColumn();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Welkom, <?php echo htmlspecialchars($username); ?>!</h1>
     <p>Je bent ingelogd als: <strong><?php echo htmlspecialchars($role); ?></strong></p>
     
-    <!-- Link for everyone to edit their own profile/password (Req 6) -->
+    <!-- Link to edit profile/password -->
     <p>
         <a href="editUser.php?id=<?php echo $current_user_id; ?>">Mijn gegevens / Wachtwoord wijzigen</a>
     </p>
@@ -71,30 +73,31 @@ $current_user_id = $stmt->fetchColumn();
             <?php
             require 'db.php';
             try {
-                // Modified query to include ORDER BY
-                $stmt = $conn->prepare("SELECT id, username, role FROM users ORDER BY username ASC");
+                // Fetch users ordered by username
+                $stmt = $conn->prepare("SELECT id, username, role, description FROM users ORDER BY username ASC");
                 $stmt->execute();
                 
-                // Requirement: rowCount
+                // Count users
                 $count = $stmt->rowCount();
                 echo "<p>Totaal aantal gebruikers: $count</p>";
                 
-                // Requirement: fetchAll
+                // Fetch all users
                 $users = $stmt->fetchAll();
                 
                 if ($count > 0) {
                     echo "<table border='1' cellpadding='5' cellspacing='0'>";
-                    echo "<tr><th>ID</th><th>Gebruikersnaam</th><th>Rol</th><th>Acties</th></tr>";
+                    echo "<tr><th>ID</th><th>Gebruikersnaam</th><th>Rol</th><th>Beschrijving</th><th>Acties</th></tr>";
                     
-                    // Requirement: foreach
+                    // Loop through users
                     foreach ($users as $user) {
                         echo "<tr>";
                         echo "<td>" . htmlspecialchars($user['id']) . "</td>";
                         echo "<td>" . htmlspecialchars($user['username']) . "</td>";
                         echo "<td>" . htmlspecialchars($user['role']) . "</td>";
+                        echo "<td>" . htmlspecialchars($user['description'] ?? '') . "</td>";
                         echo "<td>";
-                        echo "<a href='editUser.php?id=" . $user['id'] . "'>Bewerk</a> | ";
-                        echo "<a href='deleteUser.php?id=" . $user['id'] . "' onclick='return confirm(\"Weet u het zeker?\")'>Verwijder</a>";
+                        echo "<a href='editUser.php?id=" . $user['id'] . "' class='btn-edit'>Bewerk</a> ";
+                        echo "<a href='deleteUser.php?id=" . $user['id'] . "' class='btn-delete' onclick='return confirm(\"Weet u het zeker?\")'>Verwijder</a>";
                         echo "</td>";
                         echo "</tr>";
                     }
@@ -110,6 +113,8 @@ $current_user_id = $stmt->fetchColumn();
     <?php endif; ?>
 
     <br><br>
-    <a href="index.php?logout=true">Uitloggen</a>
+    <div>
+        <a href="index.php?logout=true" class="btn-logout">Uitloggen</a>
+    </div>
 </body>
 </html>

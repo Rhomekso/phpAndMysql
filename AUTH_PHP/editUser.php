@@ -2,7 +2,7 @@
 session_start();
 require 'db.php';
 
-// Check if user is logged in
+// Check login
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
@@ -11,7 +11,7 @@ if (!isset($_SESSION['username'])) {
 $current_username = $_SESSION['username'];
 $current_role = $_SESSION['role'];
 
-// Get current user ID to verify permissions
+// Get current user ID
 $stmt = $conn->prepare("SELECT id FROM users WHERE username = :username");
 $stmt->bindParam(':username', $current_username);
 $stmt->execute();
@@ -21,9 +21,9 @@ $message = "";
 $user_data = null;
 $target_id = $_GET['id'] ?? ($_POST['id'] ?? null);
 
-// Permission Check
+// Check permissions
 if ($target_id) {
-    // If not admin, can only edit self
+    // Only admin or self can edit
     if ($current_role !== 'admin' && $target_id != $current_user_id) {
         echo "Access Denied. You can only edit your own profile.";
         exit();
@@ -34,36 +34,33 @@ if ($target_id) {
     exit();
 }
 
-// Handle Update (POST)
+// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = $_POST['id'];
-    // Only admin can change role. Users keep their existing role.
-    // However, for simplicity, if user is not admin, we ignore the posted role and use existing.
-    // Or we just don't show the field.
+    // Admins can change roles; others keep their role
     
     $description = $_POST['description'];
     $new_password = $_POST['password']; // New password field
 
     if (!empty($id)) {
         try {
-            // Retrieve current data to ensure we don't accidentally change role if not allowed
-            // and to keep password if empty
+            // Fetch current role
             $stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
             $stmt->bindParam(':id', $id);
             $stmt->execute();
             $current_target_data = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            // Determine Role to save
+            // Determine role to save
             if ($current_role === 'admin') {
                 $role_to_save = $_POST['role'];
             } else {
                 $role_to_save = $current_target_data['role'];
             }
 
-            // Build Query
+            // Update user
             $sql = "UPDATE users SET role = :role, description = :description";
             
-            // Add password to query if provided
+            // Update password if provided
             if (!empty($new_password)) {
                 $sql .= ", password = :password";
             }
@@ -89,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Handle Selection (GET or Refreshed POST)
+// Fetch user data
 if ($target_id) {
     $stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
     $stmt->bindParam(':id', $target_id);
@@ -103,6 +100,7 @@ if ($target_id) {
 <head>
     <meta charset="UTF-8">
     <title>Gebruiker bewerken</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h2>Gebruiker bewerken</h2>
@@ -128,7 +126,7 @@ if ($target_id) {
                 </label><br><br>
             <?php else: ?>
                 <p>Rol: <?php echo htmlspecialchars($user_data['role']); ?></p>
-                <!-- Keep role valid for POST logic if we were using it blindly, but we handle it in PHP -->
+                <!-- Display role text for non-admins -->
             <?php endif; ?>
             
             <label>Beschrijving:<br>

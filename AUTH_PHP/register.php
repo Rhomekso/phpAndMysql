@@ -2,7 +2,7 @@
 session_start();
 require 'db.php';
 
-// If already logged in, redirect to home
+// Redirect if logged in
 if (isset($_SESSION['username'])) {
     header("Location: index.php");
     exit();
@@ -13,7 +13,7 @@ $message = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
-    // Role is always 'user' for public registration
+    // Default role for registration
     $role = 'user';
     $description = $_POST['description'] ?? '';
 
@@ -35,7 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bindParam(':description', $description);
 
                 if ($stmt->execute()) {
-                    $message = "Account succesvol aangemaakt! U kunt nu <a href='login.php'>inloggen</a>.";
+                    header("Location: login.php?registered=1");
+                    exit();
                 } else {
                     $message = "Er ging iets mis.";
                 }
@@ -56,6 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Registreren</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h2>Registreren</h2>

@@ -2,13 +2,13 @@
 session_start();
 require 'db.php';
 
-// Check if user is logged in
+// Check login
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
 
-// Role Control: Check if user is admin
+// Check admin permissions
 if ($_SESSION['role'] !== 'admin') {
     echo "Access Denied.";
     exit();
@@ -17,15 +17,15 @@ if ($_SESSION['role'] !== 'admin') {
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
     
-    // DELETE statement
+    // Delete user
     try {
         $stmt = $conn->prepare("DELETE FROM users WHERE id = :id");
         $stmt->bindParam(':id', $id);
         if ($stmt->execute()) {
-             // Optional: message handled via redirect or just simple
+             // Success
         }
     } catch (PDOException $e) {
-        // Handle error
+        // Ignore errors
     }
 }
 

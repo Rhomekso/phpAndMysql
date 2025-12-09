@@ -2,13 +2,13 @@
 session_start();
 require 'db.php';
 
-// Check if user is logged in
+// Check login
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
 
-// Role Control: Check if user is admin
+// Ensure admin role
 if ($_SESSION['role'] !== 'admin') {
     echo "Access Denied: You do not have permission to view this page.";
     echo "<br><a href='index.php'>Go back to Home</a>";
@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!empty($username) && !empty($password) && !empty($role)) {
         try {
-            // Check if user exists
+            // Check if username exists
             $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username = :username");
             $stmt->bindParam(':username', $username);
             $stmt->execute();
@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($stmt->fetchColumn() == 0) {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 
-                // INSERT INTO and VALUES used here
+                // Insert new user
                 $sql = "INSERT INTO users (username, password, role, description) VALUES (:username, :password, :role, :description)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':username', $username);
@@ -63,6 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Gebruiker aanmaken</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h2>Gebruiker aanmaken</h2>
