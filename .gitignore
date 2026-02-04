@@ -6,6 +6,7 @@
 # But don't ignore CRUD_PHP/ folder
 !CRUD_PHP/
 !AUTH_PHP/
+!Ledenadministratie_PHP/
 
 # Don't ignore .gitignore itself
 !.gitignore
