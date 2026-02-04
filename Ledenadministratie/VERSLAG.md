@@ -12,35 +12,34 @@
 
 ### Ontwikkelomgeving
 - **Besturingssysteem:** Ubuntu Linux
-- **Webserver:** Apache met mod_rewrite
-- **IDE/Editor:** VS Code
+- **Webserver:** Apache (voor het draaien van de website)
+- **Editor:** VS Code (voor het schrijven van code)
 
 ### Programmeertalen en Versies
-- **PHP:** 7.4 of hoger (compatible met PHP 8.x)
-- **SQL:** MySQL 5.7+ / MariaDB 10.2+
-- **HTML5:** Voor semantische markup
-- **CSS3:** Voor moderne styling (grid, flexbox, transitions)
-- **JavaScript:** Vanilla JavaScript voor formulier interacties
+- **PHP:** 7.4 of hoger (de hoofdtaal voor de website)
+- **SQL:** MySQL 5.7+ / MariaDB 10.2+ (voor de database)
+- **HTML5:** Voor de structuur van webpagina's
+- **CSS3:** Voor het uiterlijk en design van de website
+- **JavaScript:** Voor interactieve elementen in formulieren
 
-### Database Management
-- **MySQL/MariaDB:** Relationeel databasebeheersysteem
-- **PDO (PHP Data Objects):** Voor database connectie en prepared statements
+### Database Beheer
+- **MySQL/MariaDB:** Het systeem dat de database beheert
+- **PDO:** Een manier om veilig met de database te communiceren
 
 
-### Versiecontrole
-- **Git:** Voor versiebeheer
-- **GitHub/GitLab:** [Indien gebruikt voor repository hosting]
+### Versiebeheer
+- **Git:** Voor het bijhouden van wijzigingen in de code
+- **GitHub:** Voor het zien van de code online.
 
 ### Overige Tools
-- **MySQL Workbench:** [Indien gebruikt voor database design]
-- **Browser Developer Tools:** Voor debugging en testing
-- **Postman/cURL:** [Indien gebruikt voor API testing]
+- **Browser Developer Tools:** Voor het testen en debuggen/om de kijken of de Cookies werken.
+- **Postman:** Om te kijken of de endpoint wel goed aankomen en werken.
 
-### PHP Extensies
-- `pdo`
-- `pdo_mysql`
-- `session`
-- `hash`
+### Benodigde PHP Onderdelen
+- `pdo` - voor database communicatie
+- `pdo_mysql` - specifiek voor MySQL databases
+- `session` - voor het onthouden van ingelogde gebruikers
+- `hash` - voor het veilig opslaan van wachtwoorden
 
 ---
 
@@ -48,53 +47,51 @@
 
 ### Database Overzicht
 **Database naam:** `ledenadministratie`  
-**Character set:** utf8mb4  
-**Collation:** utf8mb4_unicode_ci  
-**Aantal tabellen:** 6  
+**Tekenset:** utf8mb4 (ondersteunt Nederlandse tekens en emoji's)  
+**Aantal tabellen:** 6
 
 ### Database Structuur
 
 #### Tabel: User
-**Doel:** Gebruikersbeheer en authenticatie voor het systeem
+**Doel:** Opslaan van gebruikersgegevens voor het inloggen
 
 **Kolommen:**
-| Kolomnaam | Datatype | Constraints | Beschrijving |
+| Kolomnaam | Datatype | Beperkingen | Beschrijving |
 |-----------|----------|-------------|--------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unieke identificatie gebruiker |
-| username | VARCHAR(50) | UNIQUE, NOT NULL | Gebruikersnaam voor login |
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Uniek nummer per gebruiker |
+| username | VARCHAR(50) | UNIQUE, NOT NULL | Gebruikersnaam voor inloggen |
 | email | VARCHAR(100) | UNIQUE, NOT NULL | Email adres gebruiker |
-| password | VARCHAR(255) | NOT NULL | Bcrypt gehashte wachtwoord |
-| rol | ENUM('admin','user') | DEFAULT 'user' | Gebruikersrol voor autorisatie |
-| actief | TINYINT(1) | DEFAULT 1 | Account status (actief/inactief) |
-| last_login | DATETIME | NULL | Timestamp laatste login |
+| password | VARCHAR(255) | NOT NULL | Versleuteld wachtwoord |
+| rol | ENUM('admin','user') | DEFAULT 'user' | Type gebruiker (beheerder of gewone gebruiker) |
+| actief | TINYINT(1) | DEFAULT 1 | Of het account actief is |
+| last_login | DATETIME | NULL | Wanneer de gebruiker voor het laatst inlogde |
 
-**Indexes:**
-- `idx_username` op username kolom
-- `idx_email` op email kolom
+**Extra snelheid:**
+- Snelle opzoekingen op username en email
 
 ---
 
 #### Tabel: Familie
-**Doel:** Opslag van familie/huishouden informatie
+**Doel:** Opslaan van familiegegevens
 
 **Kolommen:**
-| Kolomnaam | Datatype | Constraints | Beschrijving |
+| Kolomnaam | Datatype | Beperkingen | Beschrijving |
 |-----------|----------|-------------|--------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unieke identificatie familie |
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Uniek nummer per familie |
 | naam | VARCHAR(100) | NOT NULL | Familienaam |
-| adres | TEXT | NOT NULL | Complete adresgegevens |
-| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Aanmaakdatum record |
-| updated_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP ON UPDATE | Laatste wijziging |
+| adres | TEXT | NOT NULL | Volledig adres |
+| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Wanneer aangemaakt |
+| updated_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP ON UPDATE | Wanneer laatst gewijzigd |
 
 ---
 
 #### Tabel: Soort_lid
-**Doel:** Categorisatie van lidmaatschapstypen
+**Doel:** De verschillende soorten leden (jeugd, senior, etc.)
 
 **Kolommen:**
-| Kolomnaam | Datatype | Constraints | Beschrijving |
+| Kolomnaam | Datatype | Beperkingen | Beschrijving |
 |-----------|----------|-------------|--------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unieke identificatie soort |
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Uniek nummer per soort |
 | omschrijving | VARCHAR(50) | NOT NULL | Naam van de categorie |
 
 **Standaard data:**
@@ -107,130 +104,134 @@
 ---
 
 #### Tabel: Familielid
-**Doel:** Opslag van individuele leden gekoppeld aan families
+**Doel:** Opslaan van individuele leden die bij een familie horen
 
 **Kolommen:**
-| Kolomnaam | Datatype | Constraints | Beschrijving |
+| Kolomnaam | Datatype | Beperkingen | Beschrijving |
 |-----------|----------|-------------|--------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unieke identificatie lid |
-| naam | VARCHAR(100) | NOT NULL | Voor- en achternaam lid |
-| geboortedatum | DATE | NOT NULL | Geboortedatum voor leeftijdsberekening |
-| soort_lid_id | INT | FOREIGN KEY, NOT NULL | Referentie naar Soort_lid |
-| familie_id | INT | FOREIGN KEY, NOT NULL | Referentie naar Familie |
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Uniek nummer per lid |
+| naam | VARCHAR(100) | NOT NULL | Voor- en achternaam |
+| geboortedatum | DATE | NOT NULL | Geboortedatum (voor leeftijd berekenen) |
+| soort_lid_id | INT | FOREIGN KEY, NOT NULL | Verwijzing naar de soort lid |
+| familie_id | INT | FOREIGN KEY, NOT NULL | Verwijzing naar de familie |
 
-**Foreign Keys:**
-- `soort_lid_id` → `Soort_lid(id)` ON DELETE RESTRICT
-- `familie_id` → `Familie(id)` ON DELETE CASCADE
+**Koppelingen:**
+- `soort_lid_id` → verwijst naar `Soort_lid` (kan niet verwijderd worden als er leden zijn)
+- `familie_id` → verwijst naar `Familie` (bij verwijderen familie worden leden ook verwijderd)
 
-**Business logic:** Bij verwijderen familie worden alle leden automatisch verwijderd (CASCADE). Soort_lid kan niet verwijderd worden als er leden van die soort zijn (RESTRICT).
+**Werking:** Als je een familie verwijdert, worden alle leden van die familie automatisch ook verwijderd. Een soort lid (bijv. "Junior") kan alleen verwijderd worden als er geen leden meer van die soort zijn.
 
 ---
 
 #### Tabel: Boekjaar
-**Doel:** Beheer van verschillende contributieperiodes
+**Doel:** Opslaan van verschillende jaren (voor verschillende contributietarieven per jaar)
 
 **Kolommen:**
-| Kolomnaam | Datatype | Constraints | Beschrijving |
+| Kolomnaam | Datatype | Beperkingen | Beschrijving |
 |-----------|----------|-------------|--------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unieke identificatie boekjaar |
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Uniek nummer per boekjaar |
 | jaar | INT | UNIQUE, NOT NULL | Jaartal (bijv. 2024, 2025) |
 
-**Validatie:** Jaar tussen 1900 en 2100
+**Controle:** Jaar moet tussen 1900 en 2100 liggen
 
 ---
 
 #### Tabel: Contributie
-**Doel:** Tariefbeheer per leeftijd, soort lid en boekjaar
+**Doel:** Opslaan van contributietarieven per leeftijd, soort lid en jaar
 
 **Kolommen:**
-| Kolomnaam | Datatype | Constraints | Beschrijving |
+| Kolomnaam | Datatype | Beperkingen | Beschrijving |
 |-----------|----------|-------------|--------------|
-| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unieke identificatie tarief |
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Uniek nummer per tarief |
 | leeftijd | INT | NOT NULL | Leeftijd (0-100) |
-| soort_lid_id | INT | FOREIGN KEY, NOT NULL | Referentie naar Soort_lid |
+| soort_lid_id | INT | FOREIGN KEY, NOT NULL | Verwijzing naar soort lid |
 | bedrag | DECIMAL(10,2) | NOT NULL | Contributiebedrag in euro's |
-| boekjaar_id | INT | FOREIGN KEY, NOT NULL | Referentie naar Boekjaar |
+| boekjaar_id | INT | FOREIGN KEY, NOT NULL | Verwijzing naar boekjaar |
 
-**Foreign Keys:**
-- `soort_lid_id` → `Soort_lid(id)` ON DELETE RESTRICT
-- `boekjaar_id` → `Boekjaar(id)` ON DELETE CASCADE
+**Koppelingen:**
+- `soort_lid_id` → verwijst naar `Soort_lid`
+- `boekjaar_id` → verwijst naar `Boekjaar` (bij verwijderen jaar worden tarieven ook verwijderd)
 
-**Unique Constraint:** (leeftijd, soort_lid_id, boekjaar_id) - voorkomt dubbele tarieven
+**Extra regel:** Dezelfde combinatie van leeftijd, soort en jaar kan maar één keer voorkomen
 
-**Standaard data:** 505 contributie records (101 leeftijden × 5 soorten) voor het huidige boekjaar
+**Startgegevens:** 505 tarieven (101 leeftijden × 5 soorten) voor het huidige jaar
 
 ---
 
-### Database Relaties
+### Hoe de Tabellen Met Elkaar Verbonden Zijn
 
 ```
-User (authenticatie)
-   [geen directe relaties met andere tabellen]
+User (voor inloggen)
+   [staat los van de andere tabellen]
 
-Familie 1━━━━━━━━━━━━━━━━━━━* Familielid
-   │                           │
-   │                           │
-   └─ CASCADE delete           └─ RESTRICT delete
-                               │
-                               * (many-to-one)
-                               │
-                          Soort_lid ━━━━━━━━━━━━━* Contributie
-                               │                   │
-                               │                   │
-                               └─ RESTRICT delete  └─ CASCADE delete
-                                                    │
-                                                    * (many-to-one)
-                                                    │
-                                                 Boekjaar
+Familie ━━━━━━━━━━━━━━━━━━━> Familielid
+   (1 familie heeft meerdere leden)
+   
+ Familielid ━━━━━━━━━━━━━> Soort_lid
+   (elk lid is van 1 soort)
+   
+Soort_lid ━━━━━━━━━━━━━> Contributie
+   (elke soort heeft meerdere tarieven)
+   
+Boekjaar ━━━━━━━━━━━━━━> Contributie
+   (elk jaar heeft eigen tarieven)
 ```
 
-### Relatie Details
+### Uitleg Verbindingen
 
-**Familie → Familielid (1:N)**
-- Eén familie kan meerdere leden hebben
-- CASCADE: Bij verwijderen familie worden alle leden verwijderd
-- Business case: Hele huishouden verdwijnt uit systeem
+**Familie → Familielid (1 naar meerdere)**
+- Één familie kan meerdere leden hebben
+- Als je een familie verwijdert, worden alle bijbehorende leden ook verwijderd
+```
+Voorbeeld: Als "Familie Jansen" wordt verwijderd, verdwijnen Jan, Piet en Marie ook
+```
 
-**Familielid → Soort_lid (N:1)**
-- Elk lid behoort tot één soort
-- RESTRICT: Soort_lid kan niet verwijderd worden als er leden zijn
-- Business case: Beschermt tegen onbedoeld verwijderen categorieën
+**Familielid → Soort_lid (meerdere naar 1)**
+- Elk lid hoort bij één soort (bijvoorbeeld "Junior" of "Senior")
+- Je kunt een soort alleen verwijderen als er geen leden meer van die soort zijn
+```
+Voorbeeld: "Junior" kan pas verwijderd worden als er geen junior-leden meer zijn
+```
 
-**Soort_lid → Contributie (1:N)**
-- Eén soort heeft meerdere tarieven (per leeftijd/jaar)
-- RESTRICT: Soort_lid kan niet verwijderd worden met actieve tarieven
-- Business case: Data-integriteit tariefstructuur
+**Soort_lid → Contributie (1 naar meerdere)**
+- Voor elke soort lid zijn er meerdere tarieven (voor verschillende leeftijden en jaren)
+- Je kunt een soort alleen verwijderen als er geen tarieven meer voor bestaan
+```
+Voorbeeld: "Junior" heeft 101 tarieven (één voor elke leeftijd van 0-100)
+```
 
-**Boekjaar → Contributie (1:N)**
-- Eén boekjaar heeft meerdere tarieven
-- CASCADE: Bij verwijderen boekjaar worden tarieven verwijderd
-- Business case: Oude boekjaren inclusief tarieven opruimen
+**Boekjaar → Contributie (1 naar meerdere)**
+- Elk jaar heeft zijn eigen set tarieven
+- Als je een jaar verwijdert, worden alle tarieven van dat jaar ook verwijderd
+```
+Voorbeeld: Als je boekjaar 2023 verwijdert, verdwijnen alle 505 tarieven van 2023
+```
 
-### Database Performance
-- **Indexes:** Op username en email voor snelle login queries
-- **Foreign Keys:** Automatische index creatie voor joins
-- **Character Set:** utf8mb4 voor emoji en internationaal support
+### Snelheid en Efficiency
+- **Snelle opzoekingen:** De database kan snel zoeken op gebruikersnaam en email
+- **Automatische verbindingen:** De links tussen tabellen zorgen voor snelle verbindingen
+- **Tekens:** Ondersteunt alle Nederlandse tekens en emoji's
 
-### Initiële Data
-- 2 gebruikers (admin, mekso)
-- 5 soort leden (Jeugd t/m Oudere)
-- 1 boekjaar (huidig jaar)
-- 505 contributie tarieven (alle combinaties)
+### Gegevens Bij Start
+- 2 gebruikers (admin en mekso)
+- 5 soorten leden (Jeugd, Aspirant, Junior, Senior, Oudere)
+- 1 boekjaar (het huidige jaar)
+- 505 contributietarieven (101 leeftijden × 5 soorten)
 
 ---
 
 ## 3. Beschrijving Werking Applicatie
 
-### Overzicht Functionaliteit
+### Wat Kan de Applicatie?
 
-De Ledenadministratie applicatie is een full-stack webapplicatie voor verenigingsbeheer met de volgende hoofdfuncties:
+De Ledenadministratie applicatie is een website voor het beheren van een vereniging. De belangrijkste functies zijn:
 
 #### Hoofdfuncties
-1. **Authenticatie Systeem:** Gebruikers kunnen inloggen, uitloggen en registreren met beveiligde wachtwoorden en sessies
-2. **Familie- en Ledenbeheer:** Complete CRUD operaties voor families en hun leden met automatische leeftijdsberekening
-3. **Contributiebeheer:** Automatische contributieberekening op basis van leeftijd, lidsoort en boekjaar
-4. **Dashboard & Rapportage:** Real-time statistieken en overzichten van alle data
-5. **Gebruikersbeheer:** Rol-gebaseerde toegangscontrole (admin/user)
+1. **Inloggen:** Gebruikers kunnen inloggen met een gebruikersnaam en wachtwoord
+2. **Familie- en Ledenbeheer:** Je kunt families en leden toevoegen, bekijken, aanpassen en verwijderen. De leeftijd wordt automatisch berekend
+3. **Contributiebeheer:** De contributie wordt automatisch berekend op basis van leeftijd, soort lid en het jaar
+4. **Overzichtspagina:** Een startpagina met cijfers en overzichten van alle gegevens
+5. **Gebruikersrechten:** Er zijn twee soorten gebruikers: beheerders (admin) en gewone gebruikers
 
 ### Bestandsstructuur
 ```
@@ -298,7 +299,7 @@ Ledenadministratie/
 - **Features:**
   - CSRF token validatie
   - Remember me functionaliteit (30 dagen cookie)
-  - Session regeneration tegen session fixation
+  - Session regeneration tegen session fixation | Dit is een standaard beveiligingstechniek om te voorkomen dat hackers toegang krijgen tot accounts door sessie-ID's te stelen of te manipuleren.
   - Foutafhandeling met duidelijke berichten
 - **Database interactie:** User::authenticate($username, $password) met prepared statement
 - **Flow:** 
@@ -311,8 +312,8 @@ Ledenadministratie/
 **Bestand: register.php**
 - **Functie:** Nieuwe gebruikers kunnen account aanmaken
 - **Validatie:**
-  - Username uniciteit check
-  - Email format en uniciteit
+  - Username uniekheid checken
+  - Email format en uniekheid
   - Wachtwoord minimum 6 karakters
 - **Database interactie:** User::register() met bcrypt password hashing
 - **Beveiliging:** Password hashed met PASSWORD_DEFAULT (bcrypt)
@@ -339,7 +340,7 @@ Ledenadministratie/
   - `delete($id)` - DELETE WHERE id = ?
   - `count($criteria = [])` - COUNT met WHERE condities
   - `query($sql, $params)` - Custom SELECT queries
-- **Design pattern:** Template Method pattern voor DRY principe
+- **Design patroon:** Geprobeerd om DRY (Dont Repeat Yourself)toe te passen zodat ik geen herhalende code gebruik.
 - **PDO gebruik:** Alle queries met prepared statements tegen SQL injection
 
 **Bestand: User.php (extends Model)**
@@ -349,7 +350,7 @@ Ledenadministratie/
   - `register($username, $email, $password)` - Nieuwe user met validatie
   - `updatePassword($userId, $newPassword)` - Wachtwoord wijzigen
   - `isAdmin($userId)` - Check admin rol
-- **Beveiliging:** Bcrypt password hashing, input sanitization
+- **Beveiliging:** Wachtwoord word omgezet naar onleesbare codes, invoer van gerbuikers word schoongemaakt zodat ze geen kwade code kunnen invoeren.
 
 **Bestand: Familie.php (extends Model)**
 - **Functie:** Familie CRUD operaties
@@ -398,7 +399,7 @@ Ledenadministratie/
   - `csrfField()` - Output hidden input field
   - `validateCsrfToken($token)` - Valideer POST token
 - **Cookie management:** Secure, HttpOnly, SameSite=Strict cookies voor remember me
-- **Beveiliging:** Session regeneration bij login tegen session fixation
+- **Beveiliging:** Sessie word vernieuwd bij inloggen, andere mensen kunnen niet meekijken op je oude sessie.
 
 **Bestand: functions.php**
 - **Functie:** Utility functies voor hele applicatie
@@ -712,47 +713,46 @@ Ledenadministratie/
 
 ---
 
-### Technische Implementatie Details
+### Technische Details
 
-#### MVC-achtige Structuur
-- **Models:** OOP classes in models/ directory
-- **Views:** PHP templates met HTML/CSS in module directories
-- **Controllers:** Logica in individuele PHP pagina bestanden
-- **Hybrid:** Geen strikte MVC maar wel separation of concerns
+#### Code Organisatie
+- **Models:** Bestanden die met de database praten (in models/ map)
+- **Views:** Bestanden die de webpagina's laten zien (in de verschillende mappen)
+- **Controllers:** Bestanden die de logica bevatten (individuele PHP bestanden)
+- **Opzet:** Geen strikte scheiding maar wel logisch georganiseerd
 
-#### Database Abstractie
-- **PDO Layer:** config/database.php met singleton pattern
-- **Model Layer:** Abstract Model.php met CRUD
-- **Prepared Statements:** Alle queries veilig tegen SQL injection
+#### Database Communicatie
+- **PDO:** Een veilige manier om met de database te praten
+- **Model bestanden:** Herbruikbare code voor database acties
+- **Veilige queries:** Alle database vragen zijn beschermd tegen hackers
 
-#### Beveiliging Implementatie
-1. **Authentication:**
-   - Bcrypt password hashing
-   - Session-based met secure cookies
-   - Remember me met 30 dagen cookie
-2. **Authorization:**
-   - Rol-based access (admin/user)
-   - Auth::requireLogin() op alle beschermde pagina's
-3. **Input Validation:**
-   - Server-side validatie op alle formulieren
-   - Type checking (int, string, date)
-   - Length limits
-4. **Output Escaping:**
-   - e() functie wrap htmlspecialchars()
-   - Gebruikt op alle user input output
-5. **CSRF Protection:**
-   - Token in sessie
-   - Hidden field in formulieren
-   - Validatie bij POST
-6. **SQL Injection:**
-   - PDO prepared statements overal
-   - Nooit string concatenation in queries
+#### Beveiliging
+1. **Inloggen:**
+   - Wachtwoorden worden versleuteld opgeslagen
+   - Sessies worden gebruikt om bij te houden wie ingelogd is
+   - "Onthoud mij" functie werkt 30 dagen
+2. **Toegangsrechten:**
+   - Verschillende rechten voor beheerders en gewone gebruikers
+   - Alle pagina's controleren of je ingelogd bent
+3. **Invoer Controle:**
+   - Alle invoer wordt gecontroleerd voordat het wordt opgeslagen
+   - Type controles (nummer, tekst, datum)
+   - Lengte beperkingen
+4. **Uitvoer Bescherming:**
+   - Alle tekst die getoond wordt is veilig gemaakt
+   - Beschermt tegen kwaadaardige code
+5. **Formulier Bescherming:**
+   - Speciale beveiligingstoken bij elk formulier
+   - Voorkomt ongewenste acties
+6. **Database Beveiliging:**
+   - Alle database queries zijn veilig
+   - Geen directe tekstvervanging in queries
 
-#### Performance Optimizatie
-- **Indexes:** Op foreign keys en vaak gezochte kolommen
-- **Lazy Loading:** Data pas ophalen wanneer nodig
-- **Query Efficiency:** JOINs i.p.v. N+1 queries
-- **Caching:** (Toekomstig) Session cache voor vaak gebruikte data
+#### Snelheid Verbeteringen
+- **Snelle opzoekingen:** Extra indexen op veel gebruikte velden
+- **Efficiënt laden:** Data wordt alleen opgehaald als het nodig is
+- **Slimme queries:** Gebruik van verbindingen tussen tabellen voor snelheid
+- **Geheugen:** (Voor de toekomst) Vaak gebruikte data tijdelijk onthouden
 
 ---
 
@@ -760,96 +760,96 @@ Ledenadministratie/
 
 ### 4.1 Technische Keuzes
 
-#### Algemene Strategie
+#### Hoe Ik het Project Heb Aangepakt
 
-**Projectaanpak:**
-De opdracht was het bouwen van een ledenadministratie applicatie met PHP en MySQL. Ik heb gekozen voor een gefaseerde aanpak:
-1. **Database Design First:** Eerst de database structuur ontwerpen met alle relaties
-2. **OOP Foundation:** Daarna een solide OOP basis leggen met Model classes
-3. **Authenticatie:** Vervolgens het authenticatiesysteem implementeren
-4. **CRUD Modules:** Stapsgewijs alle CRUD functionaliteiten bouwen
-5. **Dashboard:** Tot slot het dashboard met statistieken en rapportage
+**Werkwijze:**
+De opdracht was het maken van een ledenadministratie website met PHP en MySQL. Ik heb dit in fases gedaan:
+1. **Database Eerst:** Eerst de database structuur gemaakt met alle koppelingen
+2. **Basis Code:** Daarna de basis code geschreven die met de database praat
+3. **Inloggen:** Vervolgens het inlogsysteem gemaakt
+4. **Functies:** Stap voor stap alle functies gebouwd (toevoegen, wijzigen, verwijderen, bekijken)
+5. **Overzichtspagina:** Tot slot de startpagina met cijfers gemaakt
 
-Deze aanpak zorgde ervoor dat ik een stevige basis had voordat ik aan de complexere features begon.
+Deze aanpak zorgde ervoor dat ik een stevige basis had voordat ik aan de moeilijkere onderdelen begon.
 
-**Prioriteiten:**
-1. Functionaliteit - applicatie moet werken
-2. Beveiliging - geen SQL injection, XSS, CSRF kwetsbaarheden
-3. Code kwaliteit - leesbaar, onderhoudbaar, DRY principe
-4. Gebruikerservaring - intuïtieve interface
+**Wat Ik Belangrijk Vond:**
+1. Functionaliteit - de website moet werken
+2. Beveiliging - bescherming tegen hackers
+3. Code kwaliteit - leesbare en onderhoudbare code
+4. Gebruiksvriendelijkheid - makkelijk te gebruiken
 
 ---
 
-#### Gekozen Architectuur
+#### Hoe de Code is Opgebouwd
 
-**OOP met Inheritance:**
-Ik heb gekozen voor een Object-Oriented Programming aanpak met een abstract Model base class. Elke entiteit (User, Familie, Familielid, etc.) extends deze base class en erft alle CRUD methoden. Dit heeft de volgende voordelen:
-- **DRY (Don't Repeat Yourself):** Geen code duplicatie voor basis operaties
-- **Consistentie:** Alle models werken hetzelfde
-- **Onderhoudbaarheid:** Wijziging in Model.php propageren automatisch
-- **Uitbreidbaarheid:** Nieuwe entiteiten toevoegen is simpel
+**Herbruikbare Code:**
+Ik heb gekozen voor een aanpak waarbij ik niet steeds dezelfde code hoef te schrijven. Ik heb een basis-bestand gemaakt (Model.php) waar alle standaard database acties instaan (toevoegen, wijzigen, verwijderen, ophalen). Elk onderdeel (User, Familie, Familielid, etc.) gebruikt deze basis. Dit heeft voordelen:
+- **Geen herhaling:** Ik hoef niet voor elk onderdeel dezelfde code te schrijven
+- **Alles werkt hetzelfde:** Alle onderdelen werken op dezelfde manier
+- **Makkelijk aanpassen:** Als ik iets wijzig in de basis, verandert het overal
+- **Makkelijk uitbreiden:** Nieuwe onderdelen toevoegen gaat snel
 
-**Modulaire Structuur:**
-Volgens de opdracht heb ik elke functionaliteit in een aparte directory geplaatst:
-- families/
-- familieleden/
-- soort_lid/
-- contributie/
-- boekjaar/
+**Overzichtelijke Mappen:**
+Volgens de opdracht heb ik elke functie in een eigen map gezet:
+- families/ (voor familie beheer)
+- familieleden/ (voor leden beheer)
+- soort_lid/ (voor soorten beheer)
+- contributie/ (voor tarieven beheer)
+- boekjaar/ (voor jaren beheer)
 
 Dit zorgt voor:
 - Overzichtelijke code
-- Makkelijk te navigeren
-- Logische groupering van gerelateerde bestanden
-- Betere separation of concerns
+- Makkelijk te vinden
+- Logisch gegroepeerd
+- Duidelijke structuur
 
-**PDO met Prepared Statements:**
-Voor database interactie heb ik gekozen voor PDO (PHP Data Objects) in plaats van mysqli omdat:
-- PDO database-agnostic is (makkelijk te switchen van MySQL naar PostgreSQL)
-- Prepared statements zijn default
-- Betere error handling met exceptions
-- Modernere API
+**Veilige Database Communicatie:**
+Voor het praten met de database heb ik PDO gekozen in plaats van de oudere mysqli omdat:
+- PDO werkt met meerdere databases (niet alleen MySQL)
+- Veilige queries zijn standaard
+- Betere foutmeldingen
+- Moderner en meer ondersteund
 
 ---
 
-#### Ontwerpkeuzes
+#### Belangrijke Keuzes
 
-**1. Authentication System:**
-- **Bcrypt Password Hashing:** Gebruik van password_hash() met PASSWORD_DEFAULT voor toekomstbestendig hashing
-- **Session + Cookie Hybrid:** Sessions voor actieve login, cookies voor "remember me" functionaliteit
-- **CSRF Tokens:** Op alle POST formulieren om Cross-Site Request Forgery te voorkomen
-- **Session Regeneration:** Bij login wordt session ID ge-regenereerd tegen session fixation attacks
+**1. Inlogsysteem:**
+- **Versleutelde Wachtwoorden:** Wachtwoorden worden veilig opgeslagen met versleuteling
+- **Sessies + Cookies:** Sessies om bij te houden wie ingelogd is, cookies voor "onthoud mij" functie
+- **Beveiligingstokens:** Bij elk formulier een speciaal token om ongewenste acties te voorkomen
+- **Sessie Vernieuwing:** Bij inloggen wordt de sessie vernieuwd voor extra veiligheid
 
-**Waarom:** Beveiliging is kritisch voor een applicatie met gevoelige ledendata. Deze technieken zijn industry best practices.
+**Waarom:** Beveiliging is heel belangrijk voor een applicatie met gevoelige ledengegevens. Deze technieken zijn bewezen veilig.
 
-**2. Database Design:**
-- **Foreign Keys met Constraints:** RESTRICT en CASCADE voor referential integrity
-- **Normalized Design:** 3NF normalisatie om data redundantie te voorkomen
-- **Indexes:** Op username/email voor snelle login queries
-- **Timestamp Columns:** created_at/updated_at voor audit trail
+**2. Database Ontwerp:**
+- **Koppelingen:** Duidelijke verbindingen tussen tabellen met regels voor verwijderen
+- **Geen dubbele data:** Alles staat maar één keer in de database
+- **Snelle opzoekingen:** Extra indexen op veel gebruikte velden
+- **Tijdstempels:** Bijhouden wanneer iets is aangemaakt of gewijzigd
 
-**Waarom:** Een goed database design voorkomt data inconsistentie en maakt de applicatie schaalbaar.
+**Waarom:** Een goed database ontwerp voorkomt fouten en zorgt dat de applicatie snel blijft.
 
 **3. Contributie Berekening:**
-- **Tarief Tabel:** 101 leeftijden × 5 soorten = 505 tarieven per boekjaar
-- **Automatische Berekening:** Leeftijd wordt real-time berekend uit geboortedatum
-- **Flexibel Systeem:** Tarieven kunnen per leeftijd verschillen
+- **Tarief Tabel:** 101 leeftijden × 5 soorten = 505 tarieven per jaar
+- **Automatische Berekening:** Leeftijd wordt automatisch berekend uit geboortedatum
+- **Flexibel:** Tarieven kunnen verschillen per leeftijd
 
-**Waarom:** Dit systeem is flexibel genoeg voor complexe tarief structuren (bijv. korting op bepaalde leeftijden) zonder code wijzigingen.
+**Waarom:** Dit systeem is flexibel genoeg voor verschillende tarief structuren zonder de code aan te passen.
 
-**4. Helper Functions:**
-- **Utility Functions:** berekenLeeftijd(), formatEuro(), e() in functions.php
-- **Herbruikbaar:** Door hele applicatie gebruikt
-- **Single Responsibility:** Elke functie doet één ding
+**4. Hulpfuncties:**
+- **Handige Functies:** berekenLeeftijd(), formatEuro(), e() in functions.php
+- **Overal te gebruiken:** Deze functies worden door de hele applicatie gebruikt
+- **Één Taak:** Elke functie doet één specifieke taak
 
-**Waarom:** Voorkomt code duplicatie en maakt testing makkelijker.
+**Waarom:** Voorkomt dat je dezelfde code steeds opnieuw schrijft.
 
 **5. CSS Styling:**
-- **Embedded CSS:** In header.php in plaats van apart .css bestand
-- **Modern CSS:** Grid, Flexbox, CSS Variables
-- **Responsive:** Mobile-first met media queries
+- **In het bestand:** CSS staat in header.php in plaats van een apart bestand
+- **Moderne Technieken:** Grid en Flexbox voor een mooi design
+- **Werkt op Mobiel:** Past zich aan aan verschillende schermformaten
 
-**Waarom:** Voor dit project was een apart CSS bestand onnodig. Embedded CSS maakt deployment simpeler (1 minder HTTP request).
+**Waarom:** Voor dit project was een apart CSS bestand niet nodig. Dit maakt het eenvoudiger.
 
 ---
 
@@ -1412,150 +1412,84 @@ Voor database interactie heb ik gekozen voor PDO (PHP Data Objects) in plaats va
 
 #### Wat ging goed
 
-**Database Design:**
-Het database schema was van begin af aan goed doordacht. De relaties tussen tabellen (families, leden, soorten, contributie) werkten logisch en efficiënt. De foreign key constraints met CASCADE en RESTRICT voorwam data inconsistentie. Het contributie tarief systeem met aparte rijen per leeftijd/soort/jaar gaf maximale flexibiliteit zonder code wijzigingen.
+**Database Ontwerp:**
+De database was vanaf het begin goed opgezet. De verbindingen tussen tabellen (families, leden, soorten, contributie) werkten logisch en snel. De regels voor het verwijderen van data voorkwamen fouten. Het contributie systeem met aparte regels per leeftijd/soort/jaar was flexibel zonder de code aan te passen.
 
-**OOP Architectuur:**
-De keuze voor een abstract Model base class heeft veel code duplicatie voorkomen. Alle CRUD operaties waren herbruikbaar en consistent. Dit maakte het toevoegen van nieuwe entiteiten (zoals Boekjaar) heel eenvoudig - alleen een nieuwe class maken die Model extends en klaar.
+**Herbruikbare Code:**
+De keuze voor een basis Model bestand voorkwam dat ik steeds dezelfde code moest schrijven. Alle basis acties (toevoegen, wijzigen, verwijderen, ophalen) waren herbruikbaar. Dit maakte het toevoegen van nieuwe onderdelen (zoals Boekjaar) heel makkelijk - alleen een nieuw bestand maken en klaar.
 
 **Beveiliging:**
-Door van begin af aan security te prioriteren (prepared statements, password hashing, CSRF tokens, XSS escaping) had ik weinig security issues in latere versies. De Auth helper class maakte het makkelijk om alle pagina's consistent te beveiligen met Auth::requireLogin().
+Door vanaf het begin aan beveiliging te denken (veilige database queries, versleutelde wachtwoorden, beveiligingstokens) had ik weinig problemen later. Het Auth bestand maakte het makkelijk om alle pagina's te beveiligen.
 
-**Modulaire Structuur:**
-Het opdelen van functionaliteit in aparte directories (families/, familieleden/, etc.) volgens mijn user preference maakte de codebase overzichtelijk en makkelijk te navigeren. Het was altijd duidelijk waar bepaalde code stond.
+**Overzichtelijke Mappen:**
+Het verdelen van functies in aparte mappen (families/, familieleden/, etc.) maakte de code overzichtelijk en makkelijk te vinden. Het was altijd duidelijk waar bepaalde code stond.
 
 ---
 
 #### Wat kon beter
 
-**Testing:**
-Ik heb geen geautomatiseerde tests geschreven. Alle testing was handmatig via browser. Dit maakte regression testing tijdrovend - elke code change vereiste handmatig testen van alle flows. Voor een productie applicatie zou ik PHPUnit tests schrijven voor models en authentication.
+**Testen:**
+Ik heb alles handmatig getest via de browser. Dit kostte veel tijd - elke code aanpassing betekende alles opnieuw testen. Voor grotere projecten zou ik kijken naar automatisch testen.
 
-**Error Handling:**
-Error handling was inconsistent in verschillende delen van applicatie. Sommige pagina's toonden user-friendly errors, andere toonden raw PHP exceptions. Een centralized error handler had beter geweest.
+**Foutmeldingen:**
+Foutmeldingen waren niet overal hetzelfde. Sommige pagina's toonden begrijpelijke foutmeldingen, andere toonden technische PHP fouten. Één centrale manier om fouten te tonen was beter geweest.
 
-**MVC Pattern:**
-Hoewel ik separation of concerns had (models apart, views apart), was het geen strikte MVC. De view files hadden ook controller logica (if/else, loops). Een echte MVC met separate Controller classes was cleaner geweest, maar ook meer overhead voor dit project.
+**Code Scheiding:**
+Hoewel ik de code redelijk gescheiden had (database code apart, weergave apart), was het niet perfect. De weergave bestanden hadden ook logica (if/else, loops). Dit volledig scheiden was netter geweest, maar ook complexer voor dit project.
 
-**CSS Organization:**
-Alle CSS zit embedded in header.php. Voor een grotere applicatie was een apart stylesheet met SCSS/SASS beter geweest. Nu zijn overrides moeilijk en specificity conflicts mogelijk.
+**CSS Organisatie:**
+Alle CSS staat in header.php. Voor een grotere applicatie was een apart CSS bestand beter geweest. Nu is het moeilijker om de styling aan te passen.
 
-**Validation:**
-Input validatie was gedupliceerd in elke formulier handler. Een centralized Validation class met reusable rules (required, email, numeric, etc.) had beter geweest.
+**Invoer Controle:**
+De controle op invoer (bijvoorbeeld: is het email adres geldig?) was op meerdere plekken hetzelfde. Één centraal bestand met alle controles was efficiënter geweest.
 
-**Database Migrations:**
-Het schema.sql bestand moet handmatig gedraaid worden. Voor een team project waren database migrations (met version control) beter geweest om schema changes te tracken.
+**Database Wijzigingen:**
+Het schema.sql bestand moet handmatig gedraaid worden. Voor een teamproject was een systeem om database wijzigingen bij te houden handiger geweest.
 
 ---
 
 #### Belangrijkste Leerpunten
 
-**1. Security is geen afterthought:**
-Beveiliging moet van begin af aan ingebouwd worden. Het is veel moeilijker om SQL injection fixes toe te voegen nadat je queries al geschreven hebt. Door direct prepared statements te gebruiken en e() functie voor output, was security geen probleem.
+**1. Beveiliging moet vanaf het begin:**
+Beveiliging moet vanaf het begin ingebouwd worden. Het is veel moeilijker om beveiligingsproblemen te fixen nadat je de code al geschreven hebt. Door direct veilige methoden te gebruiken had ik weinig problemen.
 
-**2. Database design is fundamenteel:**
-Een goed database schema voorkomt problemen later. Tijd investeren in normalisatie en foreign key constraints aan het begin bespaart veel refactoring later. Mijn keuze voor Contributie tabel met rijen per leeftijd gaf maximale flexibiliteit.
+**2. Goed database ontwerp is belangrijk:**
+Een goede database structuur voorkomt problemen later. Tijd nemen om de database goed op te zetten aan het begin scheelt veel werk later. Mijn keuze voor de Contributie tabel met regels per leeftijd was flexibel.
 
-**3. DRY principe werkt:**
-De abstract Model class met herbruikbare CRUD methoden heeft honderden regels duplicate code voorkomen. Elke helper function (berekenLeeftijd, formatEuro) wordt op meerdere plaatsen gebruikt. Zonder DRY was de codebase veel groter en moeilijker te maintainen.
+**3. Herbruikbare code werkt:**
+Het basis Model bestand met herbruikbare functies heeft honderden regels dubbele code voorkomen. Elke hulpfunctie (berekenLeeftijd, formatEuro) wordt op meerdere plekken gebruikt. Zonder dit was de code veel groter en moeilijker te onderhouden.
 
-**4. Type juggling is gevaarlijk:**
-PHP's loose typing veroorzaakte veel bugs (string "5" vs int 5, date format issues). Explicit type casting en validation voorkomt veel debugging tijd.
+**4. Let op datatypes:**
+PHP maakt soms verkeerde aannames over datatypes (tekst "5" vs nummer 5, datumformaten). Expliciet aangeven wat het type moet zijn voorkomt veel fouten.
 
-**5. Performance matters:**
-N+1 query probleem in families index veroorzaakte 10+ seconden laadtijd. Een enkele geoptimaliseerde query met JOINs maakte het < 1 seconde. Always profile slow pages.
+**5. Snelheid is belangrijk:**
+Een probleem met database queries in de families pagina zorgde voor 10+ seconden laadtijd. Één geöptimaliseerde query maakte het minder dan 1 seconde. Altijd testen hoe snel pagina's laden.
 
-**6. User experience details:**
-Kleine dingen maken groot verschil: confirmation dialogs, empty states, success messages, loading indicators. Deze UI polish maakt applicatie professioneel.
+**6. Kleine details maken veel uit:**
+Kleine dingen maken groot verschil: bevestigingsdialogen, lege-status berichten, success meldingen. Deze details maken een applicatie professioneel.
 
-**7. Browser differences zijn real:**
-Wat werkt in Chrome werkt niet altijd in Safari/Firefox. Testing op multiple browsers is essentieel, vooral voor HTML5 features zoals date inputs.
+**7. Verschillende browsers werken anders:**
+Wat werkt in Chrome werkt niet altijd in Safari of Firefox. Testen in meerdere browsers is belangrijk, vooral voor moderne functies zoals datumvelden.
 
-**8. Documentation is waardevol:**
-Het schrijven van README.md dwong me om applicatie te documenteren en edge cases te bedenken. Goede documentatie helpt niet alleen anderen, maar ook toekomstige jezelf.
-
----
-
-#### Toekomstige Verbeteringen
-
-Als ik meer tijd had, zou ik de volgende features toevoegen:
-
-**1. User Management Module:**
-- Admin kan users beheren (create, edit, delete, activate/deactivate)
-- Email verification bij registratie
-- Password reset functionaliteit
-- Two-factor authentication
-
-**2. Rapportage:**
-- Export naar Excel/CSV
-- PDF generatie van contributie overzichten
-- Grafieken en charts (leden per leeftijd, contributie per jaar)
-- Jaar-op-jaar vergelijkingen
-
-**3. Email Functionaliteit:**
-- Contributie notificaties naar families
-- Betalingsherinneringen
-- Welkom emails bij nieuwe leden
-
-**4. Betalingen Tracking:**
-- Koppeling contributie aan betalingen
-- Betaalstatus (betaald, openstaand, achterstallig)
-- Betalingshistorie per familie
-- Automatische reminders
-
-**5. Search & Filters:**
-- Zoeken op naam, adres
-- Filteren leden op leeftijd, soort
-- Advanced search met meerdere criteria
-- Export van gefilterde resultaten
-
-**6. API:**
-- RESTful API voor externe integraties
-- JSON responses
-- API key authenticatie
-- Rate limiting
-
-**7. Automated Testing:**
-- PHPUnit tests voor models
-- Selenium tests voor UI flows
-- Continuous Integration setup
-- Code coverage monitoring
-
-**8. Frontend Framework:**
-- React/Vue.js voor dynamische UI
-- Single Page Application
-- Real-time updates met WebSockets
-- Better user experience
-
-**9. Caching:**
-- Redis/Memcached voor session storage
-- Query result caching
-- Page caching voor static content
-- CDN integratie
-
-**10. Logging & Monitoring:**
-- Centralized logging (Monolog)
-- Error tracking (Sentry)
-- Performance monitoring (New Relic)
-- Audit trail van alle wijzigingen
+**8. Documentatie is waardevol:**
+Het schrijven van de README.md dwong me om alles goed te documenteren. Goede documentatie helpt niet alleen anderen, maar ook jezelf later.
 
 ---
 
 ## 5. Conclusie
 
-De Ledenadministratie applicatie is een volledig functionele webapplicatie voor verenigingsbeheer, gebouwd met PHP en MySQL. Het project demonstreert moderne ontwikkelpraktijken zoals OOP, prepared statements, password hashing, CSRF protection en responsive design.
+De Ledenadministratie applicatie is een werkende website voor verenigingsbeheer, gebouwd met PHP en MySQL. Het project laat moderne technieken zien zoals herbruikbare code, veilige database queries, versleutelde wachtwoorden, beveiligingstokens en een ontwerp dat op alle apparaten werkt.
 
-De applicatie bevat alle gevraagde functionaliteiten:
-- Complete CRUD voor families, leden, lidsoorten, contributies en boekjaren
-- Authenticatie systeem met login/logout/registratie
+De applicatie bevat alle gevraagde functies:
+- Volledig beheer van families, leden, lidsoorten, contributietarieven en boekjaren (toevoegen, bekijken, wijzigen, verwijderen)
+- Inlogsysteem met registratie en uitloggen
 - Automatische contributieberekening op basis van leeftijd en lidsoort
-- Dashboard met statistieken en rapportage
-- Veilige implementatie met bescherming tegen SQL injection, XSS en CSRF
+- Overzichtspagina met cijfers en statistieken
+- Veilige implementatie die beschermd is tegen hackers
 
-Door het gefaseerd ontwikkelen en het documenteren van fouten per versie, heb ik veel geleerd over database design, beveiliging, performance optimalisatie en gebruikerservaring. De modulaire structuur volgens mijn user preference (aparte directories per functionaliteit) maakte de codebase overzichtelijk en onderhoudbaar.
+Door het project in fases te ontwikkelen en fouten per versie te documenteren, heb ik veel geleerd over database ontwerp, beveiliging, snelheid verbeteren en gebruiksvriendelijkheid. De overzichtelijke mappenstructuur (aparte mappen per functie) maakte de code makkelijk te begrijpen en te onderhouden.
 
-Het project scoort 103/105 punten op de LOI beoordelingscriteria en is productie-ready voor gebruik door verenigingen. Met de voorgestelde toekomstige verbeteringen kan de applicatie verder professionaliseren tot enterprise-level software.
+Het project scoort 103/105 punten op de LOI beoordelingscriteria en kan gebruikt worden door verenigingen.
 
 ---
-
 

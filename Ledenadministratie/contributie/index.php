@@ -68,18 +68,28 @@ include __DIR__ . '/../includes/header.php';
             <th>Boekjaar</th>
             <th>Leeftijd</th>
             <th>Soort Lid</th>
-            <th>Bedrag</th>
+            <th>Basisbedrag</th>
+            <th>Korting %</th>
+            <th>Te Betalen</th>
             <th>Acties</th>
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($contributies as $contributie): ?>
+        <?php foreach ($contributies as $contributie): 
+            // Bereken te betalen bedrag
+            $basisbedrag = floatval($contributie['basisbedrag']);
+            $kortingspercentage = floatval($contributie['kortingspercentage']);
+            $korting = $basisbedrag * ($kortingspercentage / 100);
+            $teBetalen = $basisbedrag - $korting;
+        ?>
             <tr>
                 <td><?php echo e($contributie['id']); ?></td>
                 <td><?php echo e($contributie['boekjaar']); ?></td>
                 <td><?php echo e($contributie['leeftijd']); ?> jaar</td>
                 <td><?php echo e($contributie['soort_lid_naam']); ?></td>
-                <td><?php echo formatEuro($contributie['bedrag']); ?></td>
+                <td><?php echo formatEuro($basisbedrag); ?></td>
+                <td><?php echo e($kortingspercentage); ?>%</td>
+                <td style="font-weight: bold;"><?php echo formatEuro($teBetalen); ?></td>
                 <td class="actions">
                     <a href="edit.php?id=<?php echo $contributie['id']; ?>" class="btn btn-warning">Bewerken</a>
                     <a href="delete.php?id=<?php echo $contributie['id']; ?>" class="btn btn-danger" onclick="return confirm('Weet je zeker dat je deze contributie wilt verwijderen?')">Verwijderen</a>
@@ -89,7 +99,7 @@ include __DIR__ . '/../includes/header.php';
         
         <?php if (empty($contributies)): ?>
             <tr>
-                <td colspan="6" class="empty-message">Geen contributies gevonden.</td>
+                <td colspan="8" class="empty-message">Geen contributies gevonden.</td>
             </tr>
         <?php endif; ?>
     </tbody>

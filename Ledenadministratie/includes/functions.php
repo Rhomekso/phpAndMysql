@@ -12,10 +12,11 @@ function berekenLeeftijd($geboortedatum) {
 
 /**
  * Haal contributie op voor een familielid op basis van leeftijd, soort lid en boekjaar
+ * Berekening: Te betalen = basisbedrag - (basisbedrag × kortingspercentage / 100)
  */
 function getContributieBedrag($pdo, $leeftijd, $soort_lid_id, $boekjaar_id) {
     $stmt = $pdo->prepare("
-        SELECT bedrag 
+        SELECT basisbedrag, kortingspercentage 
         FROM Contributie 
         WHERE leeftijd = :leeftijd 
         AND soort_lid_id = :soort_lid_id 
@@ -28,7 +29,17 @@ function getContributieBedrag($pdo, $leeftijd, $soort_lid_id, $boekjaar_id) {
     ]);
     
     $result = $stmt->fetch();
-    return $result ? $result['bedrag'] : 0.00;
+    if (!$result) {
+        return 0.00;
+    }
+    
+    // Bereken contributie: basisbedrag - (basisbedrag × kortingspercentage / 100)
+    $basisbedrag = floatval($result['basisbedrag']);
+    $kortingspercentage = floatval($result['kortingspercentage']);
+    $korting = $basisbedrag * ($kortingspercentage / 100);
+    $teBetalen = $basisbedrag - $korting;
+    
+    return $teBetalen;
 }
 
 /**
