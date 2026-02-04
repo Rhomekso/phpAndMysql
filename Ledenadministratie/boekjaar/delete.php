@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/Auth.php';
-Auth::requireLogin();
+Auth::requireAdmin();
 
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/functions.php';

@@ -42,8 +42,55 @@ include __DIR__ . '/includes/header.php';
 
 <h1>Welkom bij de Ledenadministratie</h1>
 
-<p>Deze applicatie helpt bij het beheren van de ledenadministratie en contributie voor een vereniging.</p>
+<div class="info-inline">
+    <p style="margin: 0;">Deze applicatie helpt bij het beheren van de ledenadministratie en contributie voor een vereniging.</p>
+    <?php if (!Auth::isAdmin()): ?>
+    <button type="button" class="info-icon" title="Toon gebruikersinformatie" aria-label="Toon gebruikersinformatie" onclick="window.openUserInfo && window.openUserInfo()">i</button>
+    <?php endif; ?>
+</div>
 
+<?php if (!Auth::isAdmin()): ?>
+<div id="user-info-box" class="info-box dismissible" style="display:none; background-color: #e3f2fd; border-left: 4px solid #2196f3; margin: 20px 0;">
+    <button type="button" class="close-btn" aria-label="Sluiten" onclick="window.closeUserInfo && window.closeUserInfo()">&times;</button>
+    <h3 style="margin-top: 0; color: #1976d2;">ℹ️ Gebruikersinformatie</h3>
+    <p><strong>Je bent ingelogd als gewone gebruiker.</strong></p>
+    <p>Je kunt:</p>
+    <ul style="margin: 10px 0;">
+        <li>✅ Families toevoegen en bewerken</li>
+        <li>✅ Familieleden toevoegen en bewerken</li>
+    </ul>
+    <p>Je kunt <strong>niet</strong>:</p>
+    <ul style="margin: 10px 0;">
+        <li>❌ Families of familieleden verwijderen</li>
+        <li>❌ Contributies beheren</li>
+        <li>❌ Boekjaren beheren</li>
+        <li>❌ Soort leden beheren</li>
+    </ul>
+    <p style="margin-top: 15px; font-style: italic;">Heb je iets nodig dat verwijderd of aangepast moet worden? Neem dan contact op met een admin.</p>
+</div>
+<script>
+(function(){
+  var key = 'hide_user_info_v1';
+  var box = document.getElementById('user-info-box');
+  if (!box) return;
+  // standaard verborgen; toon alleen als expliciet geopend
+  if (window.localStorage && localStorage.getItem(key) === '0') {
+    box.style.display = 'block';
+  }
+  window.openUserInfo = function(){
+    if (!box) return;
+    box.style.display = 'block';
+    try { if (window.localStorage) localStorage.setItem(key, '0'); } catch(e) {}
+  };
+  window.closeUserInfo = function(){
+    if (box) box.style.display = 'none';
+    try { if (window.localStorage) localStorage.setItem(key, '1'); } catch(e) {}
+  };
+})();
+</script>
+<?php endif; ?>
+
+<?php if (Auth::isAdmin()): ?>
 <h2>Statistieken</h2>
 
 <div class="stats-grid">
@@ -71,6 +118,7 @@ include __DIR__ . '/includes/header.php';
         <p class="bedrag"><?php echo formatEuro($totale_contributie); ?></p>
     </div>
 <?php endif; ?>
+<?php endif; ?>
 
 <h2>Snelle Links</h2>
 
@@ -83,6 +131,7 @@ include __DIR__ . '/includes/header.php';
         <strong>Familieleden Beheren</strong><br>
         <small>Beheer van individuele familieleden</small>
     </a>
+    <?php if (Auth::isAdmin()): ?>
     <a href="soort_lid/index.php" class="link-card">
         <strong>Soort Leden</strong><br>
         <small>Beheer lidmaatschapscategorieën</small>
@@ -95,6 +144,11 @@ include __DIR__ . '/includes/header.php';
         <strong>Boekjaren</strong><br>
         <small>Beheer boekjaren</small>
     </a>
+    <a href="gebruikers/index.php" class="link-card" style="background: #ffd700; color: #333;">
+        <strong>Gebruikersbeheer</strong><br>
+        <small>Beheer gebruikers en rechten</small>
+    </a>
+    <?php endif; ?>
 </div>
 
 <h2>Contributie Staffels</h2>

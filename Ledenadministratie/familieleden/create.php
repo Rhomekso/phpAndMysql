@@ -99,6 +99,52 @@ include __DIR__ . '/../includes/header.php';
         </select>
     </div>
     
+    <div class="info-box" style="margin-top: 20px; background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; border-radius: 5px;">
+        <h3 style="margin-top: 0; margin-bottom: 15px; color: #495057;">Staffels Contributie 2026</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #e9ecef;">
+                    <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Categorie</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Leeftijd</th>
+                    <th style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">Korting</th>
+                    <th style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">Te Betalen</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">Jeugd</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">0-7 jaar</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">50%</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">€50,00</td>
+                </tr>
+                <tr style="background-color: #f8f9fa;">
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">Aspirant</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">8-12 jaar</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">40%</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">€60,00</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">Junior</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">13-17 jaar</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">25%</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">€75,00</td>
+                </tr>
+                <tr style="background-color: #f8f9fa;">
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">Senior</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">18-50 jaar</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">0%</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">€100,00</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">Oudere</td>
+                    <td style="padding: 10px; border: 1px solid #dee2e6;">51+ jaar</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">45%</td>
+                    <td style="padding: 10px; text-align: right; border: 1px solid #dee2e6;">€55,00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
     <button type="submit" class="btn btn-success">Opslaan</button>
     <a href="index.php<?php echo $voorgeselecteerde_familie_id ? '?familie_id=' . $voorgeselecteerde_familie_id : ''; ?>" class="btn btn-warning">Annuleren</a>
 </form>

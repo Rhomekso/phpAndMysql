@@ -234,9 +234,25 @@ Auth::init();
             background: #0056b3;
         }
         
-        .link-card small {
+.link-card small {
             color: #cce5ff;
         }
+        
+        /* Inline info block with icon */
+        .info-inline { display: flex; align-items: center; gap: 10px; }
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: #1976d2;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        .info-icon:hover { background: #1259a3; }
         
         input[type="password"], input[type="email"] {
             width: 100%;
@@ -251,12 +267,25 @@ Auth::init();
             margin: 50px auto;
         }
         
-        .info-box {
+.info-box {
             margin-top: 20px;
             padding: 15px;
             background: #e3f2fd;
             border-radius: 5px;
         }
+        /* Dismissible info box */
+        .info-box.dismissible { position: relative; }
+        .info-box .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #555;
+        }
+        .info-box .close-btn:hover { color: #000; }
         
         .filter-bar {
             margin-bottom: 20px;
@@ -278,9 +307,12 @@ Auth::init();
             <?php if (Auth::check()): ?>
             <li><a href="/phpAndMysql/Ledenadministratie/families/index.php">Families</a></li>
             <li><a href="/phpAndMysql/Ledenadministratie/familieleden/index.php">Familieleden</a></li>
+            <?php if (Auth::isAdmin()): ?>
             <li><a href="/phpAndMysql/Ledenadministratie/soort_lid/index.php">Soort Leden</a></li>
             <li><a href="/phpAndMysql/Ledenadministratie/contributie/index.php">Contributies</a></li>
             <li><a href="/phpAndMysql/Ledenadministratie/boekjaar/index.php">Boekjaren</a></li>
+            <li><a href="/phpAndMysql/Ledenadministratie/gebruikers/index.php" style="color: #ffd700;">Gebruikersbeheer</a></li>
+            <?php endif; ?>
             <?php endif; ?>
         </ul>
         <div style="float: right; color: white;">

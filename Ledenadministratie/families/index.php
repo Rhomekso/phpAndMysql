@@ -50,7 +50,9 @@ include __DIR__ . '/../includes/header.php';
                 <td class="actions">
                     <a href="../familieleden/index.php?familie_id=<?php echo $familie['id']; ?>" class="btn btn-primary">Leden</a>
                     <a href="edit.php?id=<?php echo $familie['id']; ?>" class="btn btn-warning">Bewerken</a>
+                    <?php if (Auth::isAdmin()): ?>
                     <a href="delete.php?id=<?php echo $familie['id']; ?>" class="btn btn-danger" onclick="return confirm('Weet je zeker dat je deze familie wilt verwijderen?')">Verwijderen</a>
+                    <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>

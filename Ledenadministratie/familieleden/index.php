@@ -83,7 +83,9 @@ include __DIR__ . '/../includes/header.php';
                 <td><?php echo formatEuro($contributie); ?></td>
                 <td class="actions">
                     <a href="edit.php?id=<?php echo $lid['id']; ?>" class="btn btn-warning">Bewerken</a>
+                    <?php if (Auth::isAdmin()): ?>
                     <a href="delete.php?id=<?php echo $lid['id']; ?><?php echo $familie_id ? '&familie_id=' . $familie_id : ''; ?>" class="btn btn-danger" onclick="return confirm('Weet je zeker dat je dit familielid wilt verwijderen?')">Verwijderen</a>
+                    <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>

@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS Contributie (
 -- Mekso: wachtwoord = klopklop123
 INSERT IGNORE INTO User (username, email, password, rol) VALUES 
     ('admin', 'admin@ledenadmin.nl', '$2y$12$nHdJAWUJun4x4ixLq80L7uU5NFIG1Hs3dxugCDzhSiwMGTAm8cKwq', 'admin'),
-    ('mekso', 'mekso@ledenadmin.nl', '$2y$12$jDZTZ8evwtezHac6yjyJduu4TPj0t0uakaEIWAzKRp9G2lzOsxWxy', 'user');
+    ('mekso', 'mekso@ledenadmin.nl', '$2y$12$jDZTZ8evwtezHac6yjyJduu4TPj0t0uakaEIWAzKRp9G2lzOsxWxy', 'admin');
 
 INSERT INTO Soort_lid (omschrijving) VALUES
     ('Jeugd'),
