@@ -662,54 +662,85 @@ Ledenadministratie/
 ### Workflow Voorbeelden
 
 #### Workflow 1: Nieuwe Familie en Leden Toevoegen
-1. Login via auth/login.php met credentials
-2. Dashboard toont overzicht (0 families)
-3. Klik "Families Beheren" → families/index.php
-4. Klik "Nieuwe familie" knop → families/create.php
-5. Vul formulier: naam "Familie Jansen", adres "Dorpsstraat 1"
-6. Submit → Familie::create() → Redirect naar families/index.php
-7. Klik "Familieleden Beheren" → familieleden/index.php
-8. Klik "Nieuw lid" → familieleden/create.php
-9. Vul formulier: naam "Jan Jansen", geboortedatum "2010-05-15", familie "Familie Jansen", soort "Junior"
-10. Submit → Familielid::create() → Redirect naar familieleden/index.php
-11. Herhaal stap 8-10 voor andere familieleden
-12. Dashboard toont nu 1 familie, X leden, totale contributie berekend
+1. Login via auth/login.php met credentials (admin/admin123 of mekso/klopklop123)
+2. Dashboard toont:
+   - Voor admins: statistieken (0 families, 0 leden, 5 soort leden, 2 boekjaren) en totale contributie 2026
+   - Voor gewone gebruikers: geen statistieken, wel snelle links naar Families en Familieleden
+3. Klik "Families" in navigatie → families/index.php (of gebruik snelle link)
+4. Klik "Nieuwe Familie Toevoegen" → families/create.php
+5. Vul formulier: naam "Familie Jansen", adres "Dorpsstraat 1, 1234AB Amsterdam"
+6. Submit → INSERT INTO Familie → Redirect naar families/index.php
+7. In families/index.php: klik "Leden" button bij Familie Jansen → familieleden/index.php?familie_id=X
+8. Klik "Nieuw Familielid Toevoegen" → familieleden/create.php?familie_id=X
+9. Vul formulier:
+   - Naam: "Jan Jansen"
+   - Geboortedatum: "2010-05-15" (13 jaar)
+   - Soort Lid: selecteer "Junior" → kortingspercentage wordt automatisch ingevuld (25%)
+   - Familie: voorgeselecteerd "Familie Jansen"
+   - Basisbedrag: €100 (readonly)
+   - Kortingspercentage: 25% (readonly, automatisch)
+10. Onderaan formulier: Staffels tabel toont alle categorieën met leeftijd, korting en bedrag
+11. Submit → INSERT INTO Familielid → Redirect naar familieleden/index.php?familie_id=X
+12. Herhaal stap 8-11 voor andere leden (Piet, Marie)
+13. Dashboard toont nu (alleen voor admins): 1 familie, 3 leden, totale contributie berekend
 
 #### Workflow 2: Contributie Berekening Controleren
-1. Dashboard → klik "Families Beheren"
-2. Tabel toont per familie: aantal leden + contributie bedrag
-3. Contributie wordt berekend:
-   - Haal alle leden van familie op
-   - Per lid: berekenLeeftijd(geboortedatum)
-   - Query contributie tarief: WHERE leeftijd = X AND soort_lid_id = Y AND boekjaar_id = huidig
+1. Ga naar "Families" → families/index.php
+2. Tabel toont per familie: ID, Naam, Adres, Aantal Leden, Contributie en Acties
+3. Contributie wordt automatisch berekend via berekenFamilieContributie():
+   - Haal alle leden van familie op uit Familielid tabel
+   - Per lid: berekenLeeftijd(geboortedatum) → leeftijd in jaren
+   - Query contributie tarief: SELECT basisbedrag, kortingspercentage WHERE leeftijd = X AND soort_lid_id = Y AND boekjaar_id = 1 (2026)
+   - Bereken: Te betalen = basisbedrag - (basisbedrag × kortingspercentage / 100)
    - Tel alle bedragen op
-4. Voorbeeld Familie Jansen:
-   - Jan (13 jaar, Junior) → € 75,00
-   - Piet (45 jaar, Senior) → € 100,00
-   - Marie (8 jaar, Aspirant) → € 60,00
-   - **Totaal: € 235,00**
+4. Voorbeeld Familie Jansen met 3 leden:
+   - Jan (geb. 2010-05-15, 15 jaar, Junior): basisbedrag €100 - 25% = **€75,00**
+   - Piet (geb. 1978-03-20, 47 jaar, Senior): basisbedrag €100 - 0% = **€100,00**
+   - Marie (geb. 2016-08-10, 9 jaar, Aspirant): basisbedrag €100 - 40% = **€60,00**
+   - **Totaal Familie Jansen: € 235,00**
+5. Bij Familieleden overzicht: elke rij toont naam, geboortedatum, leeftijd, soort lid en individuele contributie
+6. Contributie Staffels tabel (op dashboard en contributie formulieren): overzicht van alle 5 categorieën met leeftijdsbereik, korting% en te betalen bedrag
 
-#### Workflow 3: Nieuw Boekjaar Starten
-1. Klik "Boekjaren Beheren" → boekjaar/index.php
-2. Huidige lijst: 2024 (actief)
-3. Klik "Nieuw boekjaar" → boekjaar/create.php
-4. Vul jaar: 2025
-5. Submit → Boekjaar::create()
-6. Ga naar "Contributie Tarieven" → contributie/index.php
-7. Maak 505 nieuwe tarieven voor 2025:
-   - Per soort lid (5x)
-   - Per leeftijd (101x, van 0 t/m 100)
-   - Totaal: 5 × 101 = 505 records
-8. Of: kopieer tarieven via SQL script
+#### Workflow 3: Contributietarieven Beheren (alleen admin)
+1. Login als admin → navigatie toont "Contributies" link
+2. Klik "Contributies" → contributie/index.php
+3. Pagina toont:
+   - Filter dropdown: selecteer boekjaar (standaard: alle boekjaren)
+   - Tabel met kolommen: ID, Boekjaar, Leeftijd, Soort Lid, Basisbedrag, Korting%, Te Betalen, Acties
+4. Huidige data: 505 tarieven voor boekjaar 2026:
+   - Jeugd (0-7 jaar): basisbedrag €100, korting 50%, te betalen €50
+   - Aspirant (8-12 jaar): basisbedrag €100, korting 40%, te betalen €60
+   - Junior (13-17 jaar): basisbedrag €100, korting 25%, te betalen €75
+   - Senior (18-50 jaar): basisbedrag €100, korting 0%, te betalen €100
+   - Oudere (51-100 jaar): basisbedrag €100, korting 45%, te betalen €55
+5. Nieuwe contributie toevoegen:
+   - Klik "Nieuwe Contributie Toevoegen" → contributie/create.php
+   - Selecteer boekjaar, leeftijd (0-100), soort lid
+   - Voer basisbedrag in (bijv. €100)
+   - Selecteer soort lid → kortingspercentage wordt automatisch ingevuld (readonly)
+   - Berekend bedrag wordt getoond: Te betalen = basisbedrag - (basisbedrag × korting / 100)
+   - Staffels tabel onderaan formulier toont overzicht
+6. Contributie bewerken:
+   - Klik "Bewerken" bij een tarief → contributie/edit.php?id=X
+   - Wijzig basisbedrag of kortingspercentage
+   - Berekening wordt automatisch bijgewerkt
+7. Let op: gewone gebruikers hebben geen toegang tot deze module (Auth::requireAdmin())
 
-#### Workflow 4: Admin vs User Rechten
-1. Login als admin/admin123
-2. Menu toont: Alle modules + User management (toekomstig)
-3. Logout
-4. Login als mekso/klopklop123 (user rol)
-5. Menu toont: Zelfde modules (in dit project geen verschil)
-6. Auth::requireAdmin() kan gebruikt worden voor restricted pages
-7. Voorbeeld: User management alleen voor admins
+#### Workflow 4A: Admin (beheerder)
+1. Login als admin of mekso (beiden hebben rol 'admin').
+2. Navigatie toont: Families, Familieleden, Soort Leden, Contributies, Boekjaren en Gebruikersbeheer.
+3. Rechten: toevoegen, bewerken én verwijderen in alle modules.
+4. Voorbeeld (verwijderen): ga naar Familieleden → klik Verwijderen bij een lid → bevestig → record verdwijnt.
+5. Voorbeeld (gebruikersbeheer): Gebruikers → Nieuwe gebruiker → vul gegevens → rol kan op 'user' of 'admin' worden gezet. Admin en mekso kunnen zelf niet worden verwijderd en hun rol kan niet worden aangepast.
+6. Beveiliging: alle beheerpagina's zijn beschermd met Auth::requireAdmin().
+
+#### Workflow 4B: Gewone gebruiker
+1. Login als een gebruiker met rol 'user' (bijv. Marije).
+2. Navigatie toont alleen: Families en Familieleden. De links naar Soort Leden, Contributies, Boekjaren en Gebruikersbeheer zijn verborgen.
+3. Rechten: wel toevoegen en bewerken, niet verwijderen. Verwijderknoppen zijn onzichtbaar en de achterliggende delete-scripts eisen admin-rechten.
+4. Toegang: directe URL naar contributie/ of boekjaar/ resulteert in access denied en redirect naar de startpagina.
+5. Startpagina: er staat een blauw 'i'-icoon naast de introductietekst. Klik daarop om de Gebruikersinformatie te tonen of te verbergen (onthoudt keuze via localStorage).
+6. Voorbeeld (toevoegen): ga naar Families → Nieuwe familie; daarna Familieleden → Nieuw familielid. Verwijderen is niet mogelijk; neem contact op met een admin voor verwijderverzoeken.
 
 ---
 

@@ -146,7 +146,7 @@ include __DIR__ . '/includes/header.php';
     </a>
     <a href="gebruikers/index.php" class="link-card" style="background: #ffd700; color: #333;">
         <strong>Gebruikersbeheer</strong><br>
-        <small>Beheer gebruikers en rechten</small>
+        <small style="color: #000;">Beheer gebruikers en rechten</small>
     </a>
     <?php endif; ?>
 </div>
