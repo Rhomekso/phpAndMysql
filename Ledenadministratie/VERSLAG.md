@@ -236,54 +236,71 @@ De Ledenadministratie applicatie is een website voor het beheren van een verenig
 ### Bestandsstructuur
 ```
 Ledenadministratie/
-├── index.php                   # Dashboard met statistieken
-├── auth/                       # Authenticatie module
-│   ├── login.php              # Login pagina met remember me
-│   ├── logout.php             # Uitlog functionaliteit
-│   └── register.php           # Registratie nieuwe gebruikers
-├── models/                     # OOP Model Layer
-│   ├── Model.php              # Abstract base class met CRUD
-│   ├── User.php               # User model met authenticatie
-│   ├── Familie.php            # Familie model
-│   ├── Familielid.php         # Familielid model
-│   ├── SoortLid.php           # Soort lid model
-│   ├── Contributie.php        # Contributie model
-│   └── Boekjaar.php           # Boekjaar model
-├── includes/                   # Helper bestanden
-│   ├── Auth.php               # Session/cookie management
-│   ├── functions.php          # Utility functies
-│   ├── header.php             # HTML header + navigatie
-│   └── footer.php             # HTML footer
-├── config/                     # Configuratie
-│   └── database.php           # Database connectie
-├── database/                   # Database schema
-│   └── schema.sql             # Complete database setup
-├── families/                   # Familie CRUD
-│   ├── index.php              # Overzicht families
-│   ├── create.php             # Nieuwe familie aanmaken
-│   ├── edit.php               # Familie bewerken
-│   └── delete.php             # Familie verwijderen
-├── familieleden/              # Familielid CRUD
-│   ├── index.php              # Overzicht leden
-│   ├── create.php             # Nieuw lid aanmaken
-│   ├── edit.php               # Lid bewerken
-│   └── delete.php             # Lid verwijderen
-├── soort_lid/                 # Soort Lid CRUD
-│   ├── index.php              # Overzicht soorten
-│   ├── create.php             # Nieuwe soort aanmaken
-│   ├── edit.php               # Soort bewerken
-│   └── delete.php             # Soort verwijderen
-├── contributie/               # Contributie CRUD
-│   ├── index.php              # Overzicht tarieven
-│   ├── create.php             # Nieuw tarief aanmaken
-│   ├── edit.php               # Tarief bewerken
-│   └── delete.php             # Tarief verwijderen
-├── boekjaar/                  # Boekjaar CRUD
-│   ├── index.php              # Overzicht boekjaren
-│   ├── create.php             # Nieuw boekjaar aanmaken
-│   ├── edit.php               # Boekjaar bewerken
-│   └── delete.php             # Boekjaar verwijderen
-└── README.md                   # Technische documentatie
+│
+├── 📁 auth/                        # Authenticatie module (3 bestanden)
+│   ├── login.php                   # Login met remember me
+│   ├── logout.php                  # Logout, verwijder sessions/cookies
+│   └── register.php                # Registratie nieuwe gebruikers
+│
+├── 📁 models/                      # OOP Model Layer (7 bestanden)
+│   ├── Model.php                   # Abstract base class met CRUD
+│   ├── User.php                    # User model met authenticate(), register()
+│   ├── Familie.php                 # Familie model
+│   ├── Familielid.php             # Familielid model
+│   ├── SoortLid.php               # Soort lid model
+│   ├── Contributie.php            # Contributie model
+│   └── Boekjaar.php               # Boekjaar model
+│
+├── 📁 includes/                    # Helper files (4 bestanden)
+│   ├── Auth.php                    # Session/cookie management class
+│   ├── functions.php               # Utility functies (6 functies)
+│   ├── header.php                  # HTML header + navigatie + CSS
+│   └── footer.php                  # HTML footer
+│
+├── 📁 config/                      # Configuratie (1 bestand)
+│   └── database.php                # Database config + PDO connectie
+│
+├── 📁 database/                    # Database schema (1 bestand)
+│   └── schema.sql                  # Complete database schema (580+ regels)
+│
+├── 📁 families/                    # Familie CRUD (4 bestanden)
+│   ├── index.php                   # Overzicht families
+│   ├── create.php                  # Nieuwe familie
+│   ├── edit.php                    # Familie bewerken
+│   └── delete.php                  # Familie verwijderen
+│
+├── 📁 familieleden/               # Familielid CRUD (4 bestanden)
+│   ├── index.php                   # Overzicht leden
+│   ├── create.php                  # Nieuw lid
+│   ├── edit.php                    # Lid bewerken
+│   └── delete.php                  # Lid verwijderen
+│
+├── 📁 soort_lid/                  # Soort Lid CRUD (4 bestanden)
+│   ├── index.php                   # Overzicht soorten
+│   ├── create.php                  # Nieuwe soort
+│   ├── edit.php                    # Soort bewerken
+│   └── delete.php                  # Soort verwijderen
+│
+├── 📁 contributie/                # Contributie CRUD (4 bestanden)
+│   ├── index.php                   # Overzicht tarieven
+│   ├── create.php                  # Nieuw tarief
+│   ├── edit.php                    # Tarief bewerken
+│   └── delete.php                  # Tarief verwijderen
+│
+├── 📁 boekjaar/                   # Boekjaar CRUD (4 bestanden)
+│   ├── index.php                   # Overzicht boekjaren
+│   ├── create.php                  # Nieuw boekjaar
+│   ├── edit.php                    # Boekjaar bewerken
+│   └── delete.php                  # Boekjaar verwijderen
+│
+├── 📁 gebruikers/                # Gebruikersbeheer (4 bestanden)
+│   ├── index.php                   # Overzicht gebruikers (admin-only)
+│   ├── create.php                  # Nieuwe gebruiker (admin-only)
+│   ├── edit.php                    # Gebruiker bewerken (admin-only)
+│   └── delete.php                  # Gebruiker verwijderen (admin-only)
+│
+├── index.php                       # Dashboard / Home pagina
+└── README.md                       # Deze documentatie
 ```
 
 **Totaal:** 36 PHP bestanden, 1 SQL bestand, 2485+ regels code
@@ -750,7 +767,7 @@ Ledenadministratie/
 - **Models:** Bestanden die met de database praten (in models/ map)
 - **Views:** Bestanden die de webpagina's laten zien (in de verschillende mappen)
 - **Controllers:** Bestanden die de logica bevatten (individuele PHP bestanden)
-- **Opzet:** Geen strikte scheiding maar wel logisch georganiseerd
+- **Opzet:** Geen strenge scheiding maar wel logisch opbouw.
 
 #### Database Communicatie
 - **PDO:** Een veilige manier om met de database te praten
@@ -791,22 +808,22 @@ Ledenadministratie/
 
 ### 4.1 Technische Keuzes
 
-#### Hoe Ik het Project Heb Aangepakt
+#### Hoe ***IK*** het Project Heb Aangepakt
 
 **Werkwijze:**
-De opdracht was het maken van een ledenadministratie website met PHP en MySQL. Ik heb dit in fases gedaan:
+De opdracht was het maken van een ledenadministratie website met PHP en MySQL. Ik heb dit in stappen gedaan:
 1. **Database Eerst:** Eerst de database structuur gemaakt met alle koppelingen
 2. **Basis Code:** Daarna de basis code geschreven die met de database praat
 3. **Inloggen:** Vervolgens het inlogsysteem gemaakt
-4. **Functies:** Stap voor stap alle functies gebouwd (toevoegen, wijzigen, verwijderen, bekijken)
+4. **Functies:** Stap voor stap alle functies gebouwd (toevoegen, wijzigen, verwijderen, bekijken/CRUD)
 5. **Overzichtspagina:** Tot slot de startpagina met cijfers gemaakt
 
-Deze aanpak zorgde ervoor dat ik een stevige basis had voordat ik aan de moeilijkere onderdelen begon.
+Deze aanpak zorgde ervoor dat ik een goede basis had voordat ik aan de lastigere onderdelen begon.
 
 **Wat Ik Belangrijk Vond:**
 1. Functionaliteit - de website moet werken
 2. Beveiliging - bescherming tegen hackers
-3. Code kwaliteit - leesbare en onderhoudbare code
+3. Code kwaliteit - leesbare en makkelijk te onderhouden code
 4. Gebruiksvriendelijkheid - makkelijk te gebruiken
 
 ---
@@ -1162,7 +1179,7 @@ Voor het praten met de database heb ik PDO gekozen in plaats van de oudere mysql
        }
    }
    ```
-   - **Geleerd:** Always validate and convert date formats before database insert.
+   - **Geleerd:** Altijd is eerst controleren en dan omzetten van datum formats voordat je database injecteerd.
 
 ---
 
@@ -1187,7 +1204,7 @@ Voor het praten met de database heb ik PDO gekozen in plaats van de oudere mysql
        // ...
    }
    ```
-   - **Geleerd:** PHP is loosely typed, maar MySQL is strict. Always cast types before query.
+   - **Geleerd:** PHP is loosely typed, maar MySQL is strict. Altijd omzetten naar juiste type.
 
 2. **Fout:** Performance probleem: families index page laadde 10+ seconden
    - **Oorzaak:** N+1 query probleem - per familie werd loop gedaan met queries per lid
@@ -1201,7 +1218,8 @@ Voor het praten met de database heb ik PDO gekozen in plaats van de oudere mysql
                  AND fl.soort_lid_id = c.soort_lid_id
              WHERE fl.familie_id = ? AND c.boekjaar_id = ?";
    ```
-   - **Geleerd:** N+1 queries zijn performance killer. Use JOINs en aggregate functies waar mogelijk.
+   - **Geleerd:** 
+   Ga niet 100 keer naar de database voor informatie die je in 1 keer kunt ophalen!
 
 3. **Fout:** Totale contributie op dashboard was incorrect (te laag)
    - **Oorzaak:** Leden zonder matching tarief werden niet geteld (NULL bedragen)
@@ -1215,7 +1233,7 @@ Voor het praten met de database heb ik PDO gekozen in plaats van de oudere mysql
    }
    $totaal += $bedrag;
    ```
-   - **Geleerd:** Always handle NULL cases in calculations, provide sensible defaults.
+   - **Geleerd:** Altijd NULL cases goed beschrijven, geef zinnige alternatief.
 
 4. **Fout:** Contributie tarieven voor leeftijd > 100 miste
    - **Oorzaak:** Schema.sql genereerde alleen 0-100, er was een lid van 101 jaar
@@ -1226,7 +1244,7 @@ Voor het praten met de database heb ik PDO gekozen in plaats van de oudere mysql
        $errors[] = "Leeftijd moet tussen 0 en 120 zijn";
    }
    ```
-   - **Geleerd:** Edge cases happen. Always validate user input en add buffer in data.
+   - **Geleerd:** Edge cases happen. Controleer invoer en zord dat systeem genoeg ruimte heeft voor uitzonderingen.
 
 ---
 
@@ -1248,7 +1266,7 @@ Voor het praten met de database heb ik PDO gekozen in plaats van de oudere mysql
        return '€ ' . number_format($bedrag, 2, ',', '.');
    }
    ```
-   - **Geleerd:** Always format currency voor display, especially voor Nederlandse format (komma voor decimalen).
+   - **Geleerd:** Always format currency voor display, helemaal voor Nederlandse format (komma voor decimalen).
 
 2. **Fout:** CSS grid broke op mobile devices
    - **Oorzaak:** Fixed grid columns (4 columns) te breed voor small screens
@@ -1435,7 +1453,7 @@ Voor het praten met de database heb ik PDO gekozen in plaats van de oudere mysql
    define('DB_USER', 'your_username');
    define('DB_PASS', 'your_password');
    ```
-   - **Geleerd:** Never commit production credentials to version control. Use environment variables of placeholders.
+   - **Geleerd:** Commit nooit productie informatie naar versiebeheer. Gebruik placeholders of andere variabele.
 
 ---
 
@@ -1503,7 +1521,7 @@ Kleine dingen maken groot verschil: bevestigingsdialogen, lege-status berichten,
 Wat werkt in Chrome werkt niet altijd in Safari of Firefox. Testen in meerdere browsers is belangrijk, vooral voor moderne functies zoals datumvelden.
 
 **8. Documentatie is waardevol:**
-Het schrijven van de README.md dwong me om alles goed te documenteren. Goede documentatie helpt niet alleen anderen, maar ook jezelf later.
+Het schrijven van de README.md zette mij aan om alles goed te volgen. Goede documentatie helpt niet alleen anderen, maar ook mezelf later.
 
 ---
 
@@ -1518,9 +1536,7 @@ De applicatie bevat alle gevraagde functies:
 - Overzichtspagina met cijfers en statistieken
 - Veilige implementatie die beschermd is tegen hackers
 
-Door het project in fases te ontwikkelen en fouten per versie te documenteren, heb ik veel geleerd over database ontwerp, beveiliging, snelheid verbeteren en gebruiksvriendelijkheid. De overzichtelijke mappenstructuur (aparte mappen per functie) maakte de code makkelijk te begrijpen en te onderhouden.
-
-Het project scoort 103/105 punten op de LOI beoordelingscriteria en kan gebruikt worden door verenigingen.
+Door het project in stappen te ontwikkelen en fouten per versie te documenteren, heb ik veel geleerd over database ontwerp, beveiliging, snelheid verbeteren en gebruiksvriendelijkheid. De overzichtelijke mappenstructuur (aparte mappen per functie) maakte de code makkelijk te begrijpen en te onderhouden.
 
 ---
 

@@ -81,7 +81,7 @@ function formatEuro($bedrag) {
 }
 
 /**
- * Escape HTML output
+ * Zet HTML-karakters om naar veilige codes en niet als HTML weergeven (XSS preventie)
  */
 function e($string) {
     return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');

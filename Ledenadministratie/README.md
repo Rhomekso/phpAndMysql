@@ -22,12 +22,13 @@ Een professionele full-stack PHP/MySQL applicatie voor verenigingsbeheer met vol
 
 ### Authenticatie Systeem
 - **Login/Logout**: Volledige authenticatie met session management
-- **Registratie**: Nieuwe gebruikers kunnen zich registreren
+- **Registratie**: Nieuwe gebruikers kunnen zich registreren (altijd rol 'user')
 - **Remember Me**: 30-dagen cookie voor automatische login
 - **Wachtwoord Beveiliging**: Bcrypt hashing met `password_hash()`
 - **Session Security**: Httponly cookies, SameSite=Strict, session regeneration
 - **Toegangscontrole**: Alle pagina's beschermd met `Auth::requireLogin()`
 - **Rol Management**: Admin en user rollen met verschillende rechten
+- **Gebruikersbeheer**: Admin-only module voor beheren van gebruikers
 
 ### Ledenadministratie
 - **Families Beheren**: Volledige CRUD voor families met adresgegevens
@@ -36,26 +37,32 @@ Een professionele full-stack PHP/MySQL applicatie voor verenigingsbeheer met vol
 - **Soort Leden**: Beheer van lidmaatschapscategorieën (5 standaard categorieën)
 - **Koppeling Familie-Leden**: Foreign key relaties voor data-integriteit
 
-### Contributiebeheer
+### Contributiebeheer (Admin-only)
 - **Tariefbeheer**: CRUD voor contributietarieven per leeftijd en soort lid
-- **Automatische Berekening**: Contributie wordt automatisch berekend op basis van:
+- **Basisbedrag + Korting**: Contributie berekening via basisbedrag en kortingspercentage
+  - Formule: Te betalen = basisbedrag - (basisbedrag × kortingspercentage / 100)
+- **Automatische Berekening**: Real-time berekening op basis van:
   - Geboortedatum (leeftijd)
-  - Soort lid (Jeugd, Aspirant, Junior, Senior, Oudere)
+  - Soort lid (Jeugd 50%, Aspirant 40%, Junior 25%, Senior 0%, Oudere 45%)
+  - Basisbedrag (standaard €100)
   - Actief boekjaar
+- **Automatische Velden**: Kortingspercentage wordt automatisch ingevuld (readonly) bij selectie soort lid
+- **Fraudepreventie**: Basisbedrag en kortingspercentage zijn readonly in formulieren
 - **Familiecontributie**: Totale contributie per familie met optelsom leden
 - **Boekjaarbeheer**: Meerdere boekjaren voor verschillende periodes
 - **Staffels per Leeftijd**: 101 leeftijdscategorieën (0-100 jaar)
 
 ### Dashboard & Rapportage
-- **Statistieken Dashboard**: Real-time overzicht van:
+- **Statistieken Dashboard (Admin-only)**: Real-time overzicht van:
   - Aantal families
   - Aantal familieleden
   - Aantal soort leden
   - Aantal boekjaren
   - Totale contributie huidig jaar
-- **Snelle Links**: Direct toegang tot alle modules
+- **Snelle Links**: Direct toegang tot modules (gebaseerd op gebruikersrechten)
 - **Contributie Staffels**: Overzicht van alle tarieven en kortingen
 - **Filter Mogelijkheden**: Filter contributies per boekjaar
+- **Gebruikersinformatie**: Wegklikbaar info-icoon voor gewone gebruikers met rechten overzicht
 
 ### Gebruikerservaring
 - **Responsive Design**: Werkt op desktop, tablet en mobile
@@ -158,10 +165,17 @@ Wachtwoord: admin123
 Rol: Administrator
 ```
 
-### User Account (Standaard rechten)
+### Admin Account 2 (Volledige rechten)
 ```
 Gebruikersnaam: mekso
 Wachtwoord: klopklop123
+Rol: Administrator
+```
+
+### Test User Account (Beperkte rechten)
+```
+Gebruikersnaam: Marije
+Wachtwoord: (zelf aanmaken via registratie)
 Rol: User
 ```
 
@@ -169,7 +183,8 @@ Rol: User
 Registreer via: `/phpAndMysql/Ledenadministratie/auth/register.php`
 - Minimale wachtwoord lengte: 6 karakters
 - Unieke username en email vereist
-- Automatisch rol: user
+- Automatisch rol: user (beperkte rechten)
+- Admin rechten kunnen alleen door admins worden toegekend via Gebruikersbeheer
 
 ---
 
@@ -234,11 +249,17 @@ Ledenadministratie/
 │   ├── edit.php                    # Boekjaar bewerken
 │   └── delete.php                  # Boekjaar verwijderen
 │
+├── 📁 gebruikers/                # Gebruikersbeheer (4 bestanden)
+│   ├── index.php                   # Overzicht gebruikers (admin-only)
+│   ├── create.php                  # Nieuwe gebruiker (admin-only)
+│   ├── edit.php                    # Gebruiker bewerken (admin-only)
+│   └── delete.php                  # Gebruiker verwijderen (admin-only)
+│
 ├── index.php                       # Dashboard / Home pagina
 └── README.md                       # Deze documentatie
 ```
 
-**Totaal**: 36 PHP bestanden, 1 SQL bestand, 1 README
+**Totaal**: 40 PHP bestanden, 1 SQL bestand, 1 README
 
 ---
 
@@ -262,9 +283,10 @@ Ledenadministratie/
 - Standaard: Jeugd, Aspirant, Junior, Senior, Oudere
 
 #### 5. Contributie
-- id, leeftijd, soort_lid_id (FK), bedrag, boekjaar_id (FK)
+- id, leeftijd, soort_lid_id (FK), basisbedrag, kortingspercentage, boekjaar_id (FK)
 - Foreign Keys: soort_lid_id → Soort_lid (RESTRICT), boekjaar_id → Boekjaar (CASCADE)
 - UNIQUE: (leeftijd, soort_lid_id, boekjaar_id)
+- Berekening: Te betalen = basisbedrag - (basisbedrag × kortingspercentage / 100)
 
 #### 6. Boekjaar
 - id, jaar (UNIQUE)
@@ -340,37 +362,48 @@ Auth::validateCsrfToken($t)     // Valideer token
 
 ## 📝 CRUD Functionaliteiten per Module
 
-### Families
+### Families (Alle gebruikers: toevoegen/bewerken, Admin: verwijderen)
 - **Index**: Lijst met leden count, contributie berekening
 - **Create**: Naam + adres invoer, validatie
 - **Edit**: Pre-filled form, UPDATE query
-- **Delete**: CASCADE naar familieleden
+- **Delete**: CASCADE naar familieleden (alleen admin)
 
-### Familieleden
-- **Index**: JOIN met Familie en Soort_lid, leeftijd berekening
-- **Create**: Dropdowns voor familie/soort, date picker geboortedatum
+### Familieleden (Alle gebruikers: toevoegen/bewerken, Admin: verwijderen)
+- **Index**: JOIN met Familie en Soort_lid, leeftijd berekening, contributie per lid
+- **Create**: Dropdowns voor familie/soort, date picker geboortedatum, staffels tabel
 - **Edit**: Pre-filled form met dropdowns
-- **Delete**: Simpele DELETE
+- **Delete**: Simpele DELETE (alleen admin)
 
-### Soort Leden
+### Soort Leden (Admin-only)
 - **Index**: Lijst 5 categorieën (Jeugd-Oudere)
 - **Create/Edit/Delete**: RESTRICT constraint bij delete
 
-### Contributies
-- **Index**: Filter op boekjaar, JOIN met Soort_lid en Boekjaar
-- **Create**: Leeftijd (0-100), soort, bedrag, boekjaar
-- **Edit/Delete**: UNIQUE constraint op (leeftijd, soort, boekjaar)
+### Contributies (Admin-only)
+- **Index**: Filter op boekjaar, JOIN met Soort_lid en Boekjaar, toont basisbedrag, korting% en te betalen
+- **Create**: Leeftijd (0-100), soort, basisbedrag, kortingspercentage (automatisch), boekjaar
+- **Edit**: Basisbedrag en kortingspercentage aanpasbaar, berekening real-time
+- **Delete**: UNIQUE constraint op (leeftijd, soort, boekjaar)
 
-### Boekjaren
+### Boekjaren (Admin-only)
 - **Index**: Lijst jaren, ORDER BY DESC
 - **Create**: Integer validatie 1900-2100, UNIQUE
 - **Delete**: CASCADE naar contributie tarieven
 
+### Gebruikersbeheer (Admin-only)
+- **Index**: Lijst alle gebruikers met rol, status, laatste login
+- **Create**: Nieuwe gebruiker aanmaken, rol toewijzen (user/admin)
+- **Edit**: Gebruiker bewerken, wachtwoord reset, rol wijzigen
+- **Delete**: Gebruiker verwijderen (admin en mekso zijn beschermd)
+- **Beveiliging**: Admin en mekso kunnen niet verwijderd worden, rol wijziging geblokkeerd
+
 ### Dashboard
-- 4 statistiek cards (COUNT queries)
-- Totale contributie huidig jaar (complexe berekening)
-- 5 snelle links naar modules
-- Staffels tabel (statisch)
+- 4 statistiek cards (COUNT queries) - alleen zichtbaar voor admins
+- Totale contributie huidig jaar (complexe berekening met basisbedrag en kortingspercentage)
+- Snelle links naar modules (afhankelijk van gebruikersrechten):
+  - Alle gebruikers: Families, Familieleden
+  - Admin-only: Soort Leden, Contributies, Boekjaren, Gebruikersbeheer (goud)
+- Staffels tabel met alle kortingen (statisch)
+- Info-icoon voor gewone gebruikers: wegklikbaar overzicht van rechten
 
 ---
 
@@ -379,8 +412,8 @@ Auth::validateCsrfToken($t)     // Valideer token
 ### Helper Functions
 ```php
 berekenLeeftijd($geboortedatum)              // DateTime verschil
-getContributieBedrag($pdo, ...)              // Query tarief
-berekenFamilieContributie($pdo, ...)         // Loop leden, tel op
+getContributieBedrag($pdo, ...)              // Query tarief, bereken met kortingspercentage
+berekenFamilieContributie($pdo, ...)         // Loop leden, tel op, gebruik kortingsberekening
 formatEuro($bedrag)                          // Number format €
 e($string)                                   // HTML escape
 redirect($url)                               // Header location
@@ -439,12 +472,22 @@ redirect($url)                               // Header location
 
 ## 🚀 Gebruik
 
+### Als Admin (admin/admin123 of mekso/klopklop123)
 1. Open `http://localhost/phpAndMysql/Ledenadministratie/`
-2. Login: `admin`/`admin123` of `mekso`/`klopklop123`
-3. Gebruik dashboard voor overzicht
-4. Beheer families → leden → contributie
-5. Bekijk totale contributie op dashboard
-6. Logout via navigatie
+2. Login met admin credentials
+3. Dashboard toont statistieken en totale contributie
+4. Volledige toegang tot alle modules
+5. Gebruikersbeheer: beheer gebruikers en rechten (gouden link)
+6. Delete knoppen zichtbaar in alle modules
+7. Logout via navigatie
+
+### Als Gewone Gebruiker
+1. Registreer via `/auth/register.php` of gebruik bestaand account
+2. Login
+3. Dashboard toont info-icoon (ⓘ) - klik voor rechten overzicht
+4. Toegang tot: Families (toevoegen/bewerken) en Familieleden (toevoegen/bewerken)
+5. Geen toegang tot: Soort Leden, Contributies, Boekjaren, Gebruikersbeheer, Verwijderen
+6. Voor verwijderen: neem contact op met admin
 
 ---
 
@@ -467,4 +510,4 @@ php -r "echo password_hash('nieuw_wachtwoord', PASSWORD_DEFAULT);"
 
 Educatief project voor LOI opleiding - PHP & MySQL - 2026
 
-**Ontwikkeld met moderne PHP best practices en enterprise-level beveiliging** 🔒
+
