@@ -23,9 +23,8 @@
 - **JavaScript:** Voor interactieve elementen in formulieren
 
 ### Database Beheer
-- **MySQL/MariaDB:** Het systeem dat de database beheert
+- **MySQL:** Het systeem dat de database beheert
 - **PDO:** Een manier om veilig met de database te communiceren
-
 
 ### Versiebeheer
 - **Git:** Voor het bijhouden van wijzigingen in de code
